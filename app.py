@@ -9,9 +9,9 @@ ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "src"))
 
-from src.reserve.evaluation import Shipment, evaluate_processor
-from src.reserve.ranking import rank_eligible_processors
-from src.reserve.demo_data import ILLUSTRATIVE_FACTOR, demo_processors
+from reserve.evaluation import Shipment, evaluate_processor
+from reserve.ranking import rank_eligible_processors
+from reserve.demo_data import ILLUSTRATIVE_FACTOR, demo_processors
 
 app = Flask(__name__)
 
