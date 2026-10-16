@@ -2,8 +2,8 @@
 RESERVE — Processor Eligibility Evaluation
 
 Checks whether a processor can handle a proposed shipment.
-This module checks eligibility only; ranking and emissions
-calculations will be added later.
+Transport emissions inputs are optional and are used by ranking
+when they are supplied with explicit source provenance.
 """
 
 from dataclasses import dataclass
@@ -22,7 +22,13 @@ class Shipment:
 
 @dataclass(frozen=True)
 class Processor:
-    """Capabilities and availability of a candidate processor."""
+    """Capabilities, availability, and optional sourced transport intensity.
+
+    transport_emission_factor_kg_per_tonne_km must be expressed in
+    kg CO2e per tonne-kilometre. When supplied, the source label must
+    identify the evidence behind that value. The value is not assumed
+    to be a facility's own measured factor unless its source says so.
+    """
 
     name: str
     accepted_materials: tuple[str, ...]
@@ -31,6 +37,19 @@ class Processor:
     available_from_day: int
     available_until_day: int
     distance_km: float
+    transport_emission_factor_kg_per_tonne_km: float | None = None
+    transport_emission_factor_source: str | None = None
+    transport_emission_factor_url: str | None = None
+
+    def __post_init__(self):
+        factor = self.transport_emission_factor_kg_per_tonne_km
+        source = self.transport_emission_factor_source
+        if factor is not None and factor < 0:
+            raise ValueError("Processor emissions factor cannot be negative.")
+        if factor is not None and not (source and source.strip()):
+            raise ValueError(
+                "A processor-specific emissions factor requires a source label."
+            )
 
 
 @dataclass(frozen=True)
@@ -48,41 +67,32 @@ def evaluate_processor(
 ) -> Evaluation:
     """Check each eligibility rule and explain any failures."""
 
-    # Store all failed rules so decisions remain explainable.
     reasons = []
 
-    # A shipment must have a positive quantity.
     if shipment.quantity_tonnes <= 0:
         reasons.append("Shipment quantity must be positive.")
 
-    # The delivery window must start before it ends.
     if shipment.earliest_delivery_day > shipment.latest_delivery_day:
         reasons.append("Shipment delivery window is invalid.")
 
-    # The processor must accept the shipment's material.
     if shipment.material not in processor.accepted_materials:
         reasons.append("Processor does not accept this material.")
 
-    # The processor must have enough available capacity.
     if processor.available_capacity_tonnes < shipment.quantity_tonnes:
         reasons.append("Insufficient available processing capacity.")
 
-    # The processor must meet the required quality score.
     if processor.quality_score < shipment.required_quality:
         reasons.append("Processor quality score is below the requirement.")
 
-    # Processor availability must overlap the delivery window.
     if (
         processor.available_until_day < shipment.earliest_delivery_day
         or processor.available_from_day > shipment.latest_delivery_day
     ):
         reasons.append("Processor is unavailable during the delivery window.")
 
-    # A negative distance is invalid.
     if processor.distance_km < 0:
         reasons.append("Processor distance cannot be negative.")
 
-    # Eligibility is true only when every rule passes.
     return Evaluation(
         processor=processor.name,
         eligible=len(reasons) == 0,
