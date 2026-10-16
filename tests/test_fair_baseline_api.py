@@ -3,7 +3,7 @@
 import unittest
 
 from app import app
-from src.reserve.demo_data import demo_processors
+from reserve.demo_data import demo_processors
 
 
 class TestFairBaselineAPI(unittest.TestCase):
