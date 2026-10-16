@@ -126,6 +126,48 @@ class TestProcessorRanking(unittest.TestCase):
         )
 
 
+    def test_candidate_specific_factor_can_change_emissions_ranking(self):
+        """A farther candidate can rank first only with a lower sourced factor."""
+        efficient_far = Processor(
+            name="Lower-intensity Far Processor",
+            accepted_materials=("recycled_plastic",),
+            available_capacity_tonnes=15,
+            quality_score=0.9,
+            available_from_day=4,
+            available_until_day=9,
+            distance_km=30,
+            transport_emission_factor_kg_per_tonne_km=0.01,
+            transport_emission_factor_source="Test fixture only",
+            transport_emission_factor_url="https://example.org/test-fixture",
+        )
+        results = rank_eligible_processors(
+            self.shipment,
+            [self.near_processor, efficient_far],
+            emission_factor_kg_per_tonne_km=0.1,
+        )
+        self.assertEqual(results[0]["processor"], "Lower-intensity Far Processor")
+        self.assertAlmostEqual(
+            results[0]["estimated_emissions_kg_co2e"], 3.0
+        )
+        self.assertEqual(
+            results[0]["emission_factor_source"], "Test fixture only"
+        )
+
+    def test_candidate_factor_requires_source_label(self):
+        """A candidate-specific factor without provenance must be rejected."""
+        with self.assertRaises(ValueError):
+            Processor(
+                name="Unproven factor",
+                accepted_materials=("recycled_plastic",),
+                available_capacity_tonnes=15,
+                quality_score=0.9,
+                available_from_day=4,
+                available_until_day=9,
+                distance_km=30,
+                transport_emission_factor_kg_per_tonne_km=0.01,
+            )
+
+
 # Run these tests directly when requested.
 if __name__ == "__main__":
     unittest.main()
