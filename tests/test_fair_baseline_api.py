@@ -25,6 +25,22 @@ class TestFairBaselineAPI(unittest.TestCase):
         self.assertEqual(data["comparison"]["estimated_avoided_kg_co2e"], 0.0)
         self.assertEqual(data["comparison"]["estimated_reduction_percent"], 0.0)
 
+    def test_non_object_json_is_rejected_cleanly(self):
+        for payload in ([], "text", 7):
+            response = self.client.post("/api/evaluate", json=payload)
+            self.assertEqual(response.status_code, 400)
+
+    def test_non_finite_quantity_is_rejected(self):
+        for quantity in (float("inf"), float("-inf"), float("nan")):
+            response = self.client.post("/api/evaluate", json={
+                "material": "recycled_plastic",
+                "quantity_tonnes": quantity,
+                "required_quality": 0.8,
+                "earliest_delivery_day": 5,
+                "latest_delivery_day": 8,
+            })
+            self.assertEqual(response.status_code, 400)
+
     def test_no_eligible_candidate_has_no_fabricated_baseline(self):
         response = self.client.post("/api/evaluate", json={
             "material": "glass",
