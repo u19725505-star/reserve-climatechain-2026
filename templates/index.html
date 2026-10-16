@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10271f">
+  <meta name="description" content="RESERVE screens material processors against acceptance, capacity, quality and delivery requirements before dispatch.">
+  <title>RESERVE — Better decisions before dispatch</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="/" aria-label="RESERVE home">
+      <span class="brand-mark">R</span>
+      <span>RESERVE<span class="brand-sub">RESOURCE ROUTING</span></span>
+    </a>
+    <nav>
+      <a href="#how">How it works</a>
+      <a href="#evidence">Evidence & limits</a>
+      <a class="nav-cta" href="#simulator">Try the demo <span>↗</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="pulse"></span> DECISIONS BEFORE DISPATCH</div>
+        <h1>Send the right material.<br><span>To the right processor.</span></h1>
+        <p class="hero-intro">RESERVE checks whether a candidate processor can actually accept a shipment before it is assigned—then ranks eligible options using transparent transport estimates.</p>
+        <div class="hero-actions">
+          <a class="button button-light" href="#simulator">Run a live scenario <span>↘</span></a>
+          <a class="text-link" href="#how">Explore the approach <span>→</span></a>
+        </div>
+        <div class="hero-note"><span class="dot"></span> Interactive prototype · Fictional demonstration data</div>
+      </div>
+      <div class="hero-visual" aria-label="Illustration of a shipment being screened and routed">
+        <div class="visual-top"><span>DISPATCH CONTROL</span><span class="live-tag">● DEMO</span></div>
+        <div class="route-step">
+          <div class="route-icon">01</div>
+          <div><b>Shipment requirements</b><small>Material · Quantity · Quality · Window</small></div>
+          <span class="step-check">✓</span>
+        </div>
+        <div class="route-line"></div>
+        <div class="route-step active-step">
+          <div class="route-icon">02</div>
+          <div><b>Eligibility screening</b><small>Acceptance rules applied first</small></div>
+          <span class="step-check">✓</span>
+        </div>
+        <div class="route-line"></div>
+        <div class="route-step">
+          <div class="route-icon">03</div>
+          <div><b>Rank eligible options</b><small>Transport estimate · Decision record</small></div>
+          <span class="step-arrow">↗</span>
+        </div>
+        <div class="visual-foot"><span>RULES FIRST. RANKING SECOND.</span><span>01 / 03</span></div>
+      </div>
+      <div class="hero-index">A PRACTICAL SCREENING LAYER FOR MATERIAL RECOVERY</div>
+    </section>
+
+    <section class="ticker" aria-label="RESERVE evaluation dimensions">
+      <span>ACCEPTANCE REQUIREMENTS</span><i>✳</i><span>AVAILABLE CAPACITY</span><i>✳</i><span>QUALITY THRESHOLDS</span><i>✳</i><span>DELIVERY WINDOWS</span><i>✳</i><span>TRANSPORT ESTIMATES</span>
+    </section>
+
+    <section class="section intro-section" id="how">
+      <div class="section-kicker">01 / THE PROBLEM</div>
+      <div class="intro-grid">
+        <h2>A nearby processor<br>isn’t always the <em>right</em> one.</h2>
+        <div class="intro-body">
+          <p>A low-distance assignment can still fail if a processor rejects the material, lacks capacity, misses the required quality threshold, or cannot meet the delivery window.</p>
+          <p>RESERVE makes those constraints explicit before ranking the candidates that remain. That is a decision-support workflow—not a claim that software alone can decarbonize a supply chain.</p>
+        </div>
+      </div>
+      <div class="principle-grid">
+        <article class="principle"><span class="principle-num">01</span><div class="principle-icon">⌁</div><h3>Screen first</h3><p>Apply material, capacity, quality, distance validity and availability checks.</p></article>
+        <article class="principle"><span class="principle-num">02</span><div class="principle-icon">↗</div><h3>Rank fairly</h3><p>Compare only candidates that pass the eligibility checks.</p></article>
+        <article class="principle"><span class="principle-num">03</span><div class="principle-icon">▤</div><h3>Explain decisions</h3><p>Show exclusions and expose the assumptions behind each estimate.</p></article>
+      </div>
+    </section>
+
+    <section class="simulator-section" id="simulator">
+      <div class="section-kicker light-kicker">02 / INTERACTIVE DEMONSTRATION</div>
+      <div class="sim-heading">
+        <div><h2>Test a shipment.</h2><p>Change the requirements. See how the candidate set changes.</p></div>
+        <div class="demo-pill"><span class="pulse"></span> LOCAL DEMO DATA</div>
+      </div>
+
+      <div class="sim-layout">
+        <form id="shipment-form" class="control-panel">
+          <div class="panel-heading"><span>SHIPMENT SPECIFICATION</span><span>INPUT / 01</span></div>
+          <label for="material">Material type</label>
+          <select id="material" name="material">
+            <option value="recycled_plastic" selected>Recycled plastic</option>
+            <option value="paper">Paper</option>
+            <option value="glass">Glass</option>
+            <option value="wood">Wood</option>
+          </select>
+
+          <div class="field-row">
+            <div><label for="quantity">Quantity <span>(tonnes)</span></label><input id="quantity" type="number" min="0.1" max="1000" step="0.1" value="10" required></div>
+            <div><label for="quality">Required quality <span>(0–1)</span></label><input id="quality" type="number" min="0" max="1" step="0.01" value="0.80" required></div>
+          </div>
+          <div class="field-row">
+            <div><label for="earliest">Earliest day</label><input id="earliest" type="number" min="0" max="365" value="5" required></div>
+            <div><label for="latest">Latest day</label><input id="latest" type="number" min="0" max="365" value="8" required></div>
+          </div>
+          <div class="input-hint">Delivery days are relative to this fictional scenario, not calendar dates.</div>
+          <button class="button button-green run-button" type="submit"><span>Evaluate processors</span><span>→</span></button>
+          <button class="reset-button" type="reset">Reset example ↺</button>
+          <p id="form-error" class="form-error" role="alert"></p>
+        </form>
+
+        <div class="results-panel" aria-live="polite">
+          <div class="panel-heading"><span>SCREENING RESULTS</span><span id="run-status">READY TO RUN</span></div>
+          <div class="metric-row">
+            <div class="metric"><span>Processors checked</span><strong id="checked-count">—</strong></div>
+            <div class="metric"><span>Eligible</span><strong id="eligible-count">—</strong></div>
+            <div class="metric"><span>Excluded</span><strong id="excluded-count">—</strong></div>
+          </div>
+          <div class="result-label"><span>ELIGIBLE CANDIDATES</span><span id="ranking-note">Run a scenario to rank</span></div>
+          <div id="processor-results" class="processor-results">
+            <div class="empty-state"><span>↘</span><b>Your results appear here.</b><p>Run the example to see eligibility decisions, exclusion reasons and the ranked candidates.</p></div>
+          </div>
+          <div class="baseline-box" id="baseline-box">
+            <div class="baseline-symbol">↔</div>
+            <div><span class="mini-label">NEAREST-PROCESSOR BASELINE</span><p id="baseline-text">Compare the nearest processor with the eligibility-screened result.</p></div>
+          </div>
+        </div>
+      </div>
+      <p class="sim-disclaimer">Demonstration only. The processor profiles are fictional, and the emissions factor is illustrative—not a verified or location-specific emissions factor.</p>
+    </section>
+
+    <section class="section evidence-section" id="evidence">
+      <div class="section-kicker">03 / TRANSPARENCY BY DESIGN</div>
+      <div class="evidence-grid">
+        <div><h2>Show the evidence.<br><em>State the limits.</em></h2><p class="evidence-lead">A useful decision tool should make it easy to challenge its assumptions—not hide them behind a climate score.</p></div>
+        <div class="evidence-list">
+          <article><span class="evidence-check">✓</span><div><h3>Inspectable constraints</h3><p>Every processor is evaluated, including candidates excluded from ranking.</p></div><span class="evidence-status">IN DEMO</span></article>
+          <article><span class="evidence-check">✓</span><div><h3>Visible calculation</h3><p>Illustrative transport estimate = distance × shipment tonnes × supplied factor.</p></div><span class="evidence-status">IN DEMO</span></article>
+          <article><span class="evidence-check pending">!</span><div><h3>Real-world validation</h3><p>Operational data, sourced emissions factors and measured outcomes are still required.</p></div><span class="evidence-status pending-text">NOT YET VALIDATED</span></article>
+        </div>
+      </div>
+      <div class="integrity-banner"><span class="integrity-mark">i</span><div><b>No unsupported climate-savings claim.</b><p>This prototype does not establish emissions reductions or real-world environmental benefit. Estimates are screening aids, not verified measurements.</p></div></div>
+    </section>
+
+    <section class="section next-section">
+      <div class="section-kicker">04 / THE PATH FORWARD</div>
+      <h2>From prototype to<br><em>operational evidence.</em></h2>
+      <div class="roadmap">
+        <div><span>01</span><b>Validate requirements</b><p>Confirm acceptance and availability rules with real processors.</p><small>FOUNDATION</small></div>
+        <div><span>02</span><b>Source the factors</b><p>Document emissions-factor source, scope, units and uncertainty.</p><small>MEASUREMENT</small></div>
+        <div><span>03</span><b>Run a controlled pilot</b><p>Compare real assignments with an agreed operational baseline.</p><small>VALIDATION</small></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="#"><span class="brand-mark">R</span><span>RESERVE<span class="brand-sub">RESOURCE ROUTING</span></span></a>
+    <p>Better-informed decisions before dispatch.</p>
+    <span class="footer-tag">PROTOTYPE · OCTOBER 2026</span>
+  </footer>
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
