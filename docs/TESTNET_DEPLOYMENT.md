@@ -10,11 +10,12 @@ The page anchors a digest computed from the local audit-chain head, event count,
 
 1. Use a dedicated testnet wallet with only test funds. Never use a production wallet or commit credentials.
 2. Obtain a Sepolia RPC endpoint and test ETH from reputable sources.
-3. From a trusted local development environment, install Foundry and run `forge test -vvv`.
+3. From a trusted local development environment, install Foundry and the standard Foundry test library, then run the tests.
 4. Set `SEPOLIA_RPC_URL` and `DEPLOYER_PRIVATE_KEY` as local shell environment variables; do not put them in source control, notebooks, logs, or screenshots.
 5. Deploy using the script below. Review the network, account, and estimated transaction costs before broadcasting.
 
 ```bash
+forge install foundry-rs/forge-std --no-git
 forge test -vvv
 forge script script/DeployReserveDecisionRegistry.s.sol:DeployReserveDecisionRegistry \
   --rpc-url "$SEPOLIA_RPC_URL" --broadcast -vvvv
