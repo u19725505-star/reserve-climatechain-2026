@@ -24,8 +24,7 @@ RESERVE is a prototype. Its simulation results must be distinguished from real-w
 
 ## Project contents
 
-The repository will contain the application, simulation and evaluation code, tests, documentation, and demonstration materials as they are verified and added.
-
+The repository contains the Flask demonstration app, evaluation and ranking modules, automated tests, method documentation, and reproducible demo output. The demo profiles and fallback factor are synthetic/illustrative.
 
 ## Emissions comparison and evidence limits
 
