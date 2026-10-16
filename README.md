@@ -44,6 +44,14 @@ We aim to document data provenance, assumptions, calculation methods, test resul
 
 Prepared for consideration in the IEEE ClimateChain Global Hackathon 2026. Final competition eligibility and submission requirements should be checked against the official rules.
 
+## Explainable decision support and audit-chain prototype
+
+RESERVE now includes a deterministic explainable multi-criteria decision model exposed at `POST /api/decision-support`. It first enforces hard processor eligibility, then shows visible weighted criteria for modeled transport emissions (45%), quality margin (20%), capacity headroom (20%), and delivery-window fit (15%). These are illustrative decision-support weights, not a trained or validated machine-learning model. The result is advisory only.
+
+Each decision-support request is recorded in a local SHA-256 hash-chained JSONL audit log. `GET /api/audit` and `POST /api/audit/verify` report whether the chain links and event hashes verify. This is a tamper-evident audit primitive, **not a decentralized blockchain**: it does not implement consensus, independent validators, or replicated storage. Do not claim a deployed blockchain until those components exist and are independently checked.
+
+See [Explainable AI and audit-chain design](docs/EXPLAINABLE_AI_AND_AUDIT_CHAIN.md) for the model, weights, endpoints, threat boundaries, and limitations. The demo profiles remain fictional and the emissions factor remains illustrative and unsourced. No real climate benefit is demonstrated.
+
 ## License
 
 A license has not yet been selected.
