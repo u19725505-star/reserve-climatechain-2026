@@ -166,3 +166,82 @@ form.addEventListener("reset", () => {
     document.querySelector("#baseline-text").textContent = "Compare the nearest processor with the eligibility-screened result.";
   }, 0);
 });
+
+
+async function runExplainableDecisionSupport() {
+  const button = document.querySelector("#run-ai");
+  const output = document.querySelector("#ai-results");
+  if (!button || !output) return;
+  button.disabled = true;
+  button.textContent = "Scoring eligible candidates…";
+  const payload = {
+    material: document.querySelector("#material").value,
+    quantity_tonnes: Number(document.querySelector("#quantity").value),
+    required_quality: Number(document.querySelector("#quality").value),
+    earliest_delivery_day: Number(document.querySelector("#earliest").value),
+    latest_delivery_day: Number(document.querySelector("#latest").value)
+  };
+  try {
+    const response = await fetch("/api/decision-support", {
+      method: "POST", headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Decision support failed.");
+    const cards = data.candidates.map(candidate => {
+      const criteria = Object.entries(candidate.criteria).map(([key, value]) =>
+        "<span>" + escapeHTML(key.replaceAll("_", " ")) + ": " + formatNumber(value * 100, 1) + "%</span>"
+      ).join("");
+      return "<article class=\"processor-card\">" +
+        "<div class=\"processor-main\"><div class=\"processor-name\"><span class=\"rank-number\">#" + candidate.ai_rank +
+        "</span><span>" + escapeHTML(candidate.processor) + "</span></div><strong>" + formatNumber(candidate.score_percent, 1) + " / 100</strong></div>" +
+        "<p>" + escapeHTML(candidate.explanation) + "</p><div class=\"processor-meta\">" + criteria + "</div>" +
+        "<small>Illustrative score; not a trained or operationally validated model.</small></article>";
+    }).join("");
+    const limitations = data.limitations.map(x => "<li>" + escapeHTML(x) + "</li>").join("");
+    output.innerHTML = "<div class=\"baseline-box\"><div class=\"baseline-symbol\">✳</div><div><span class=\"mini-label\">" +
+      escapeHTML(data.model) + " · " + escapeHTML(data.status) + "</span><p>Weights: transport 45% · quality 20% · capacity 20% · delivery fit 15%. Hard eligibility rules remain mandatory.</p></div></div>" +
+      (cards || "<p>No eligible candidates for this shipment.</p>") +
+      "<div class=\"integrity-banner\"><span class=\"integrity-mark\">i</span><div><b>Model limitations</b><ul>" + limitations +
+      "</ul><p>Audit event #" + data.audit.event_sequence + " · SHA-256 " + escapeHTML(data.audit.event_hash) + " · " +
+      escapeHTML(data.audit.ledger_type) + "</p></div></div>";
+    const status = document.querySelector("#ledger-status");
+    if (status) status.textContent = "EVENT RECORDED · #" + data.audit.event_sequence;
+  } catch (error) {
+    output.textContent = error.message || "Could not run decision support.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Run decision support →";
+  }
+}
+
+async function verifyServerAuditChain() {
+  const button = document.querySelector("#verify-ledger");
+  const status = document.querySelector("#ledger-status");
+  const output = document.querySelector("#ai-results");
+  if (!button || !status) return;
+  button.disabled = true;
+  button.textContent = "Verifying…";
+  try {
+    const response = await fetch("/api/audit/verify", {method: "POST"});
+    const data = await response.json();
+    if (!response.ok) throw new Error("Audit verification failed.");
+    status.textContent = data.valid ? "CHAIN VALID · " + data.event_count + " EVENTS" : "CHAIN INVALID";
+    status.className = "evidence-status " + (data.valid ? "" : "pending-text");
+    if (output) {
+      const note = data.limitation || "No audit events have been recorded yet.";
+      output.insertAdjacentHTML("afterbegin", "<div class=\"baseline-box\"><div class=\"baseline-symbol\">✓</div><div><span class=\"mini-label\">AUDIT VERIFICATION</span><p>" +
+        escapeHTML(data.ledger_type || "Local hash chain") + ": " + (data.valid ? "valid" : "invalid") + " · " + data.event_count +
+        " event(s). " + escapeHTML(note) + "</p>" + (data.head_hash ? "<small>Chain head: " + escapeHTML(data.head_hash) + "</small>" : "") + "</div></div>");
+    }
+  } catch (error) {
+    status.textContent = "VERIFICATION FAILED";
+    if (output) output.textContent = error.message || "Could not verify audit chain.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "Verify audit chain →";
+  }
+}
+
+document.querySelector("#run-ai")?.addEventListener("click", runExplainableDecisionSupport);
+document.querySelector("#verify-ledger")?.addEventListener("click", verifyServerAuditChain);
