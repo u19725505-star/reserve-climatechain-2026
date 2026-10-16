@@ -152,6 +152,15 @@
       <div class="integrity-banner"><span class="integrity-mark">i</span><div><b>Blockchain status: foundational audit primitive, not a decentralized network.</b><p>This version uses a local append-only hash chain and integrity verification. Production blockchain claims would require replicated storage, consensus, access controls, and independently verified deployment.</p></div></div>
     </section>
 
+      <div class="integrity-banner" id="chain-anchor-panel">
+        <span class="integrity-mark">⛓</span>
+        <div>
+          <b>On-chain decision evidence</b>
+          <p id="chain-anchor-description">{% if contract_address %}Configured for chain ID {{ chain_id }}. Connect your browser wallet to anchor a verified audit digest.{% else %}No deployed contract address is configured yet. Deploy the registry to Sepolia, then set RESERVE_CONTRACT_ADDRESS and RESERVE_CHAIN_ID in the Render service environment.{% endif %}</p>
+          <button class="button button-green" id="anchor-on-chain" type="button" data-contract-address="{{ contract_address }}" data-chain-id="{{ chain_id }}" {% if not contract_address %}disabled{% endif %}>Connect wallet & anchor audit hash →</button>
+          <p id="chain-transaction-status" aria-live="polite">No on-chain transaction has been submitted by this page.</p>
+        </div>
+      </div>
     <section class="section evidence-section" id="evidence">
       <div class="section-kicker">03 / EVIDENCE & PILOT READINESS</div>
       <div class="evidence-grid">
