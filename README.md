@@ -59,6 +59,10 @@ The repository now includes [ReserveDecisionRegistry.sol](contracts/ReserveDecis
 
 See [EXPLAINABLE_AI_AND_AUDIT_CHAIN.md](docs/EXPLAINABLE_AI_AND_AUDIT_CHAIN.md) for architecture and limitations.
 
+## Testnet integration
+
+The web interface includes an optional browser-wallet action to anchor a digest of the verified local audit chain to a configured deployment of the Solidity registry. It is disabled until a contract address is configured. Deployment and activation instructions are in [TESTNET_DEPLOYMENT.md](docs/TESTNET_DEPLOYMENT.md). The contract is not deployed by this repository automatically; a testnet deployment and independently confirmed transaction are required before claiming live on-chain integration.
+
 ## License
 
 A license has not yet been selected.
