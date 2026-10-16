@@ -55,28 +55,28 @@ Do not describe any item in the second list as a completed feature. If an AI or 
 
 ## 5. Three-to-five-minute demo video script
 
-**0:00–0:25 — Problem and track**  
-“RESERVE is a sustainable-supply-chain prototype for circular materials. A processor recommendation is only useful if the destination can actually accept the material, has capacity, meets quality requirements, and can meet the delivery window.”
+**0:00–0:25 — Climate supply-chain problem**  
+“RESERVE supports circular-material routing. It checks whether a processor can accept a shipment before assignment and makes the reason for each decision inspectable. The goal is to help teams choose feasible destinations and create evidence for future climate-impact evaluation.”
 
-**0:25–1:15 — Run the default scenario**  
-Open the live site. Use the default recycled-plastic shipment (7 tonnes, quality threshold 0.80, delivery days 5–8). Show which processors are eligible and which are excluded. Explain at least one exclusion: the nearest processor overall is not feasible for this quantity because its demo capacity is too small.
+**0:25–1:05 — Run the operational scenario**  
+Open the live site and run the default recycled-plastic shipment (7 tonnes, quality threshold 0.80, delivery days 5–8). Show the eligible and excluded processors. Explain why the nearest processor overall is not the valid baseline when it lacks enough capacity.
 
-**1:15–2:00 — Explain the fair baseline**  
-Show the recommended candidate and nearest eligible baseline. Explain that comparing against an ineligible nearest processor would be misleading. With the same illustrative factor applied across candidates, ranking is effectively distance-based and the default scenario does not establish an emissions improvement.
+**1:05–1:50 — Explainable AI-style decision support**  
+Click **Run decision support**. Show the weighted score and criteria contributions. Explain the 45% transport-estimate, 20% quality-margin, 20% capacity-headroom, and 15% delivery-fit weights. Be explicit that this is a transparent, deterministic multi-criteria model—not a trained machine-learning model—and that its current weights and demo inputs are illustrative.
 
-**2:00–2:45 — Change a constraint**  
-Increase shipment quantity or change the material/delivery window. Show how eligibility changes and how the API returns reasons. If no candidate qualifies, show that the system reports no eligible option instead of inventing a feasible recommendation.
+**1:50–2:30 — Tamper-evident audit record**  
+Show the event sequence and SHA-256 hash produced by a decision-support request. Click **Verify audit chain** and show the verification status. Explain that the current live application records a local hash chain, which can reveal many edits to the stored sequence but is not decentralized blockchain consensus.
 
-**2:45–3:35 — Evidence and trust**  
-Briefly show the repository's factor register and pilot protocol. Explain the distinction between a modeled estimate and a verified climate outcome, and the records a pilot would need.
+**2:30–3:10 — Smart-contract registry prototype**  
+Open the repository file `contracts/ReserveDecisionRegistry.sol`. Show how it can anchor a record digest, previous hash, model-version hash, timestamp and submitter, with writer permissions and a chain-link check. State clearly: the contract source and automated tests exist, but it has not yet been deployed to a public/test network and the web app does not yet submit on-chain transactions.
 
-**3:35–4:10 — Honest limitations and next step**  
-“The demo data are fictional and the fallback factor is unsourced. We have not measured emissions reductions. Our next milestone is a shadow-mode pilot with traceable operational data and a pre-specified comparison against the existing dispatch process.”
+**3:10–3:55 — Evidence boundaries and pilot**  
+Show the emissions-factor register and pilot protocol. Say: “The profiles are fictional and the fallback emissions factor is unsourced. We have not measured emissions reductions. A real pilot needs processor and shipment records, traceable transport activity, source-backed factors, a pre-specified baseline, and independent review.”
 
-**4:10–4:30 — Close**  
-“RESERVE is designed to make circular-material routing decisions more explicit and auditable, while making the evidence gap visible instead of hiding it.”
+**3:55–4:25 — Close**  
+“RESERVE combines explainable decision support with a tamper-evident evidence workflow and a smart-contract registry prototype. Our next milestone is a properly deployed, independently verified ledger integration and a shadow-mode pilot using real operational data.”
 
-Record the actual UI and current behavior; do not narrate features that are not present in the deployed build. Aim for 4–4.5 minutes.
+Record the actual UI and current behavior. Do not imply that the contract is deployed, that the local hash chain is a blockchain network, or that climate savings are measured. Aim for approximately 4–4.5 minutes.
 
 ## 6. Suggested judge-facing summary
 
