@@ -293,7 +293,7 @@ async function anchorAuditDigest() {
     const modelHash = ethers.keccak256(ethers.toUtf8Bytes("RESERVE-XAI-MCDM-0.1"));
     const digest = ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(
       ["string","uint256","bytes32","bytes32"],
-      ["RESERVE-AUDIT-ANCHOR-v1",BigInt(audit.event_count),audit.head_hash,modelHash]
+      ["RESERVE-AUDIT-ANCHOR-v1",BigInt(audit.event_count),"0x" + audit.head_hash.replace(/^0x/, ""),modelHash]
     ));
     status.textContent = "Review and approve the transaction in your wallet.";
     const tx = await contract.anchorDecision(digest, previous, modelHash);
