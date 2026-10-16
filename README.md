@@ -1,3 +1,11 @@
+## Deploy RESERVE
+
+Deploy the interactive RESERVE prototype directly from this GitHub repository to Render.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/u19725505-star/reserve-climatechain-2026)
+
+**Demo integrity:** Processor profiles and comparison results are illustrative. Emissions are estimates, not verified real-world reductions.
+
 # RESERVE — ClimateChain 2026
 
 **AI-assisted processing reservations and auditable supply-chain decisions**
