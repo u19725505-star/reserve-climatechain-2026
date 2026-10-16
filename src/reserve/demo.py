@@ -34,6 +34,8 @@ def main():
     )
 
     processors = demo_processors()
+    # Shared illustrative fallback only; not a verified emissions factor.
+    emission_factor = ILLUSTRATIVE_FACTOR
 
     print("=" * 64)
     print("RESERVE — PROCESSOR SCREENING DEMONSTRATION")
