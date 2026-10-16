@@ -29,9 +29,12 @@ class TestEvaluationAPI(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         body = response.get_json()
         self.assertEqual(body["status"], "ok")
-        self.assertEqual(body["release"], "0.3")
+        self.assertEqual(body["release"], "0.4")
         self.assertEqual(body["data_status"], "fictional demo data")
         self.assertEqual(body["emissions_status"], "illustrative, not verified")
+        self.assertFalse(body["contract_address_configured"])
+        self.assertEqual(body["configured_chain_id"], 11155111)
+        self.assertIn("not configured", body["on_chain_status"])
 
     def test_default_demo_has_two_eligible_processors(self):
         response = self.evaluate()
