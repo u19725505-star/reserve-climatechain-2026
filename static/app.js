@@ -245,3 +245,56 @@ async function verifyServerAuditChain() {
 
 document.querySelector("#run-ai")?.addEventListener("click", runExplainableDecisionSupport);
 document.querySelector("#verify-ledger")?.addEventListener("click", verifyServerAuditChain);
+
+
+async function anchorAuditDigest() {
+  const button = document.querySelector("#anchor-on-chain");
+  const status = document.querySelector("#chain-transaction-status");
+  if (!button || !status) return;
+  const address = (button.dataset.contractAddress || "").trim();
+  const chainId = Number(button.dataset.chainId || "11155111");
+  if (!address) { status.textContent = "Set RESERVE_CONTRACT_ADDRESS after contract deployment."; return; }
+  if (!window.ethereum || !window.ethers) { status.textContent = "A browser wallet and ethers library are required."; return; }
+  button.disabled = true;
+  try {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    let network = await provider.getNetwork();
+    if (Number(network.chainId) !== chainId) {
+      if (chainId !== 11155111) throw new Error("Switch your wallet to chain ID " + chainId + ".");
+      await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:"0xaa36a7"}]});
+      network = await provider.getNetwork();
+    }
+    if (Number(network.chainId) !== chainId) throw new Error("Wallet is on the wrong network.");
+    if (!ethers.isAddress(address)) throw new Error("Configured contract address is invalid.");
+    const auditResponse = await fetch("/api/audit");
+    const audit = await auditResponse.json();
+    if (!auditResponse.ok || !audit.valid || !audit.event_count || !audit.head_hash) {
+      throw new Error("Run decision support first and verify a non-empty audit chain.");
+    }
+    const abi = [
+      "function recordCount() view returns (uint64)",
+      "function latestRecordHash() view returns (bytes32)",
+      "function anchorDecision(bytes32,bytes32,bytes32) returns (uint64)"
+    ];
+    const contract = new ethers.Contract(address, abi, await provider.getSigner());
+    const previous = await contract.latestRecordHash();
+    const modelHash = ethers.keccak256(ethers.toUtf8Bytes("RESERVE-XAI-MCDM-0.1"));
+    const digest = ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(
+      ["string","uint256","bytes32","bytes32"],
+      ["RESERVE-AUDIT-ANCHOR-v1",BigInt(audit.event_count),audit.head_hash,modelHash]
+    ));
+    status.textContent = "Review and approve the transaction in your wallet.";
+    const tx = await contract.anchorDecision(digest, previous, modelHash);
+    status.textContent = "Submitted: " + tx.hash + " — waiting for confirmation.";
+    const receipt = await tx.wait();
+    if (!receipt || receipt.status !== 1) throw new Error("Transaction confirmation failed.");
+    status.textContent = "Confirmed in block " + receipt.blockNumber + ". Transaction: " + tx.hash;
+    status.insertAdjacentHTML("beforeend", ' <a href="https://sepolia.etherscan.io/tx/' + encodeURIComponent(tx.hash) + '" target="_blank" rel="noopener noreferrer">View on Sepolia explorer</a>');
+  } catch (error) {
+    status.textContent = error && error.message ? error.message : "Anchoring failed.";
+  } finally {
+    button.disabled = false;
+  }
+}
+document.querySelector("#anchor-on-chain")?.addEventListener("click", anchorAuditDigest);
