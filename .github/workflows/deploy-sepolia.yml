@@ -1,0 +1,34 @@
+name: Deploy RESERVE registry to Sepolia
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_testnet_deployment:
+        description: "Type DEPLOY_TO_SEPOLIA to authorize a Sepolia deployment"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: ${{ inputs.confirm_testnet_deployment == 'DEPLOY_TO_SEPOLIA' }}
+    runs-on: ubuntu-latest
+    environment: sepolia-testnet
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+      - name: Run contract tests before deployment
+        run: forge test -vvv
+      - name: Deploy registry
+        env:
+          SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
+          DEPLOYER_PRIVATE_KEY: ${{ secrets.DEPLOYER_PRIVATE_KEY }}
+        run: |
+          test -n "$SEPOLIA_RPC_URL" || (echo "Missing SEPOLIA_RPC_URL secret" && exit 1)
+          test -n "$DEPLOYER_PRIVATE_KEY" || (echo "Missing DEPLOYER_PRIVATE_KEY secret" && exit 1)
+          forge script script/DeployReserveDecisionRegistry.s.sol:DeployReserveDecisionRegistry \
+            --rpc-url "$SEPOLIA_RPC_URL" --broadcast -vvvv
