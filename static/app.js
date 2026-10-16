@@ -262,7 +262,18 @@ async function anchorAuditDigest() {
     let network = await provider.getNetwork();
     if (Number(network.chainId) !== chainId) {
       if (chainId !== 11155111) throw new Error("Switch your wallet to chain ID " + chainId + ".");
-      await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:"0xaa36a7"}]});
+      try {
+        await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:"0xaa36a7"}]});
+      } catch (switchError) {
+        if (switchError.code !== 4902) throw switchError;
+        await window.ethereum.request({method:"wallet_addEthereumChain",params:[{
+          chainId:"0xaa36a7",
+          chainName:"Ethereum Sepolia",
+          nativeCurrency:{name:"Sepolia Ether",symbol:"ETH",decimals:18},
+          rpcUrls:["https://ethereum-sepolia-rpc.publicnode.com"],
+          blockExplorerUrls:["https://sepolia.etherscan.io"]
+        }]});
+      }
       network = await provider.getNetwork();
     }
     if (Number(network.chainId) !== chainId) throw new Error("Wallet is on the wrong network.");
@@ -289,8 +300,13 @@ async function anchorAuditDigest() {
     status.textContent = "Submitted: " + tx.hash + " — waiting for confirmation.";
     const receipt = await tx.wait();
     if (!receipt || receipt.status !== 1) throw new Error("Transaction confirmation failed.");
-    status.textContent = "Confirmed in block " + receipt.blockNumber + ". Transaction: " + tx.hash;
-    status.insertAdjacentHTML("beforeend", ' <a href="https://sepolia.etherscan.io/tx/' + encodeURIComponent(tx.hash) + '" target="_blank" rel="noopener noreferrer">View on Sepolia explorer</a>');
+    status.textContent = "Confirmed in block " + receipt.blockNumber + ". Transaction: " + tx.hash + " ";
+    const link = document.createElement("a");
+    link.href = "https://sepolia.etherscan.io/tx/" + encodeURIComponent(tx.hash);
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "View on Sepolia explorer";
+    status.appendChild(link);
   } catch (error) {
     status.textContent = error && error.message ? error.message : "Anchoring failed.";
   } finally {
