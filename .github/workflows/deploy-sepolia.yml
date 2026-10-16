@@ -21,8 +21,12 @@ jobs:
         uses: actions/checkout@v4
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
+      - name: Install forge-std
+        run: forge install foundry-rs/forge-std --no-git
       - name: Run contract tests before deployment
         run: forge test -vvv
+      - name: Compile deployment script
+        run: forge build
       - name: Deploy registry
         env:
           SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
