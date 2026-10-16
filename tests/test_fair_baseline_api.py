@@ -3,6 +3,7 @@
 import unittest
 
 from app import app
+from src.reserve.demo_data import demo_processors
 
 
 class TestFairBaselineAPI(unittest.TestCase):
@@ -24,6 +25,24 @@ class TestFairBaselineAPI(unittest.TestCase):
         self.assertEqual(data["comparison"]["selected_processor"], "Processor B")
         self.assertEqual(data["comparison"]["estimated_avoided_kg_co2e"], 0.0)
         self.assertEqual(data["comparison"]["estimated_reduction_percent"], 0.0)
+
+    def test_web_api_uses_shared_demo_processor_profiles(self):
+        response = self.client.post("/api/evaluate", json={
+            "material": "recycled_plastic",
+            "quantity_tonnes": 10,
+            "required_quality": 0.8,
+            "earliest_delivery_day": 5,
+            "latest_delivery_day": 8,
+        })
+        self.assertEqual(response.status_code, 200)
+        data = response.get_json()
+        expected = {p.name: p for p in demo_processors()}
+        actual = {p["name"]: p for p in data["processors"]}
+        self.assertEqual(set(actual), set(expected))
+        for name, processor in expected.items():
+            self.assertEqual(actual[name]["distance_km"], processor.distance_km)
+            self.assertEqual(actual[name]["capacity_tonnes"], processor.available_capacity_tonnes)
+            self.assertEqual(actual[name]["accepted_materials"], list(processor.accepted_materials))
 
     def test_non_object_json_is_rejected_cleanly(self):
         for payload in ([], "text", 7):
