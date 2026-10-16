@@ -1,5 +1,6 @@
 """RESERVE: interactive supply-chain screening demonstration."""
 from pathlib import Path
+import math
 import sys
 
 from flask import Flask, jsonify, render_template, request
@@ -70,7 +71,9 @@ def health():
 
 @app.post("/api/evaluate")
 def evaluate():
-    data = request.get_json(silent=True) or {}
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "Request body must be a JSON object."}), 400
 
     try:
         material = str(data.get("material", "recycled_plastic"))
@@ -83,8 +86,10 @@ def evaluate():
 
     if material not in {"recycled_plastic", "paper", "glass", "wood"}:
         return jsonify({"error": "Select a supported demonstration material."}), 400
-    if quantity <= 0 or not 0 <= quality <= 1:
-        return jsonify({"error": "Quantity must be positive and quality must be 0–1."}), 400
+    if not math.isfinite(quantity) or quantity <= 0:
+        return jsonify({"error": "Quantity must be a finite number greater than zero."}), 400
+    if not math.isfinite(quality) or not 0 <= quality <= 1:
+        return jsonify({"error": "Quality must be a finite number between 0 and 1."}), 400
     if earliest < 0 or latest < earliest:
         return jsonify({"error": "Delivery days must be non-negative and ordered."}), 400
 
