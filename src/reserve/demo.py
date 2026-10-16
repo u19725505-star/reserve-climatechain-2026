@@ -8,6 +8,9 @@ The data and emissions factor are illustrative, not verified
 operational information or evidence of real-world climate benefits.
 """
 
+from dataclasses import asdict
+from pathlib import Path
+
 from reserve.evaluation import (
     Processor,
     Shipment,
@@ -15,12 +18,12 @@ from reserve.evaluation import (
 )
 from reserve.ranking import rank_eligible_processors
 from reserve.report import format_processor_report
+from reserve.results import build_results_record, save_results_json
 
 
 def main():
-    """Run the complete RESERVE demonstration."""
+    """Run the complete RESERVE demonstration and save JSON results."""
 
-    # Define a fictional shipment using the existing Shipment fields.
     shipment = Shipment(
         material="recycled_plastic",
         quantity_tonnes=10.0,
@@ -29,7 +32,6 @@ def main():
         latest_delivery_day=8,
     )
 
-    # Define fictional processors using the existing Processor fields.
     processors = [
         Processor(
             name="Processor A",
@@ -69,15 +71,13 @@ def main():
         ),
     ]
 
-    # Illustrative factor only: 0.1 kg CO2e per tonne-kilometre.
-    # Use a documented, appropriate factor for any real application.
+    # Illustrative only; not a verified emissions factor.
     emission_factor = 0.1
 
     print("=" * 64)
     print("RESERVE — PROCESSOR SCREENING DEMONSTRATION")
     print("=" * 64)
 
-    # Print the shipment requirements.
     print("\nSHIPMENT")
     print(f"Material: {shipment.material}")
     print(f"Quantity: {shipment.quantity_tonnes:g} tonnes")
@@ -87,7 +87,6 @@ def main():
         f"-{shipment.latest_delivery_day}"
     )
 
-    # Show the eligibility decision and reasons for each processor.
     print("\nELIGIBILITY CHECKS")
     for processor in processors:
         result = evaluate_processor(shipment, processor)
@@ -99,14 +98,12 @@ def main():
             for reason in result.reasons:
                 print(f"    - {reason}")
 
-    # Rank eligible processors using the existing ranking module.
     ranked = rank_eligible_processors(
         shipment=shipment,
         processors=processors,
         emission_factor_kg_per_tonne_km=emission_factor,
     )
 
-    # The ranking module returns the processor name as a string.
     print("\nRANKED ELIGIBLE PROCESSORS")
     print("-" * 64)
 
@@ -114,21 +111,34 @@ def main():
         print("No eligible processors were found.")
     else:
         for position, candidate in enumerate(ranked, start=1):
-            processor_name = candidate["processor"]
-            distance = candidate["distance_km"]
-            emissions = candidate["estimated_emissions_kg_co2e"]
-
             print(
-                f"{position}. {processor_name}: "
-                f"{distance:g} km, approximately "
-                f"{emissions:g} kg CO2e"
+                f"{position}. {candidate['processor']}: "
+                f"{candidate['distance_km']:g} km, approximately "
+                f"{candidate['estimated_emissions_kg_co2e']:g} kg CO2e"
             )
 
-    # Print the project's existing formatted screening report.
     print("\nFULL SCREENING REPORT")
     print(format_processor_report(ranked))
 
-    # Explain the limitations of this demonstration.
+    # Save a machine-readable record of this comparison.
+    shipment_record = asdict(shipment)
+    shipment_record["accepted_processor_count"] = len(ranked)
+    shipment_record["evaluated_processor_count"] = len(processors)
+
+    record = build_results_record(
+        shipment=shipment_record,
+        ranked_candidates=ranked,
+        emission_factor_kg_per_tonne_km=emission_factor,
+        data_status="synthetic demonstration data",
+    )
+
+    output_path = Path("results") / "processor_comparison.json"
+    saved_path = save_results_json(record, output_path)
+
+    print("\nJSON RESULTS")
+    print(f"Saved to: {saved_path.resolve()}")
+    print(f"Ranked candidates recorded: {len(ranked)}")
+
     print("\nNOTES")
     print("- Shipment and processor details are fictional.")
     print("- The emissions factor is illustrative, not verified.")

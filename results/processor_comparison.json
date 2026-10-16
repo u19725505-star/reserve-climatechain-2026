@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "project": "RESERVE",
+  "created_at_utc": "2026-10-16T18:13:26.287962+00:00",
+  "shipment": {
+    "material": "recycled_plastic",
+    "quantity_tonnes": 10.0,
+    "required_quality": 0.8,
+    "earliest_delivery_day": 5,
+    "latest_delivery_day": 8,
+    "accepted_processor_count": 2,
+    "evaluated_processor_count": 4
+  },
+  "ranking_method": "ascending estimated transport emissions",
+  "emissions": {
+    "emission_factor_kg_per_tonne_km": 0.1,
+    "status": "screening estimate, not verified measurement"
+  },
+  "data_status": "synthetic demonstration data",
+  "climate_impact_claim": "No verified emissions reduction or real-world climate benefit is established by this record.",
+  "ranked_processors": [
+    {
+      "rank": 1,
+      "processor": "Processor B",
+      "eligible": true,
+      "distance_km": 15.0,
+      "estimated_emissions_kg_co2e": 15.0,
+      "reasons": []
+    },
+    {
+      "rank": 2,
+      "processor": "Processor A",
+      "eligible": true,
+      "distance_km": 25.0,
+      "estimated_emissions_kg_co2e": 25.0,
+      "reasons": []
+    }
+  ]
+}
