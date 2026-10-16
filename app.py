@@ -20,7 +20,11 @@ app = Flask(__name__)
 
 @app.get("/")
 def home():
-    return render_template(\n        "index.html",\n        contract_address=__import__("os").environ.get("RESERVE_CONTRACT_ADDRESS", "").strip(),\n        chain_id=int(__import__("os").environ.get("RESERVE_CHAIN_ID", "11155111")),\n    )
+    return render_template(
+        "index.html",
+        contract_address=__import__("os").environ.get("RESERVE_CONTRACT_ADDRESS", "").strip(),
+        chain_id=int(__import__("os").environ.get("RESERVE_CHAIN_ID", "11155111")),
+    )
 
 
 @app.get("/health")
