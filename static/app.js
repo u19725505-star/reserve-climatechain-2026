@@ -84,7 +84,7 @@ async function evaluateScenario(event) {
     document.querySelector("#eligible-count").textContent = data.eligible_count;
     document.querySelector("#excluded-count").textContent = data.excluded_count;
     document.querySelector("#ranking-note").textContent =
-      data.eligible_count ? "Ranked by estimated transport emissions" : "No eligible candidates";
+      data.eligible_count ? "Estimated emissions vs eligible baseline" : "No eligible candidates";
     statusBox.textContent = "EVALUATION COMPLETE";
 
     const maxEmissions = Math.max(...data.processors.map(p => p.estimated_emissions_kg_co2e), 1);
@@ -97,13 +97,20 @@ async function evaluateScenario(event) {
 
     const baseline = data.baseline;
     const selected = data.selected;
-    let baselineText = `Nearest processor: ${baseline.processor}. `;
-    baselineText += baseline.eligible
-      ? "It passes the current eligibility checks."
-      : `It would fail eligibility screening: ${(baseline.reasons || []).join(" ")}`;
+    const comparison = data.comparison || {};
+    let baselineText = baseline.processor
+      ? `Fair baseline (nearest eligible): ${baseline.processor}, ${formatNumber(baseline.estimated_emissions_kg_co2e, 2)} kg CO₂e. `
+      : "No eligible baseline exists for this shipment. ";
     baselineText += selected
-      ? ` RESERVE's top eligible candidate is ${selected}.`
-      : " RESERVE found no eligible processor in this demonstration.";
+      ? `RESERVE selects ${selected} (${formatNumber(comparison.selected_estimated_emissions_kg_co2e, 2)} kg CO₂e). `
+      : "RESERVE found no eligible processor. ";
+    if (comparison.estimated_reduction_percent !== null &&
+        comparison.estimated_reduction_percent !== undefined) {
+      const delta = Number(comparison.estimated_reduction_percent);
+      const label = delta > 0 ? "lower" : delta < 0 ? "higher" : "the same";
+      baselineText += `Modeled estimate is ${label} by ${formatNumber(Math.abs(delta), 2)}% versus the eligible baseline. `;
+    }
+    baselineText += "Scenario only; not measured or verified savings.";
     document.querySelector("#baseline-text").textContent = baselineText;
 
     // This is a local browser-session audit trail, not a blockchain or server ledger.
