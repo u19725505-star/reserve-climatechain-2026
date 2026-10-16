@@ -6,6 +6,7 @@ import {ReserveDecisionRegistry} from "../contracts/ReserveDecisionRegistry.sol"
 
 contract DeployReserveDecisionRegistry is Script {
     function run() external returns (ReserveDecisionRegistry deployed) {
+        require(block.chainid == 11155111, "Sepolia chain ID 11155111 required");
         uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
         vm.startBroadcast(deployerKey);
         deployed = new ReserveDecisionRegistry();
