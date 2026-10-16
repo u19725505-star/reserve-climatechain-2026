@@ -21,7 +21,7 @@ forge script script/DeployReserveDecisionRegistry.s.sol:DeployReserveDecisionReg
   --rpc-url "$SEPOLIA_RPC_URL" --broadcast -vvvv
 ```
 
-6. Confirm the deployment transaction and contract address on Sepolia Etherscan. Verify the deployed bytecode/source and confirm chain ID 11155111. Record the deployment transaction, address, deployer, compiler settings, and source commit.
+6. If using GitHub Actions, configure the repository environment named `sepolia-testnet` with secrets `SEPOLIA_RPC_URL` and `DEPLOYER_PRIVATE_KEY`, then run the manually triggered **Deploy RESERVE registry to Sepolia** workflow and type `DEPLOY_TO_SEPOLIA`. The deployment script refuses to run unless the RPC reports Sepolia chain ID 11155111. Confirm the deployment transaction and contract address on Sepolia Etherscan. Verify the deployed bytecode/source and confirm chain ID 11155111. Record the deployment transaction, address, deployer, compiler settings, and source commit.
 7. Configure the Render web service with:
    - `RESERVE_CONTRACT_ADDRESS=<verified deployed address>`
    - `RESERVE_CHAIN_ID=11155111`
