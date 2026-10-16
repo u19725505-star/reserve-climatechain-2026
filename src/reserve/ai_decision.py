@@ -7,7 +7,7 @@ not be interpreted as measured climate benefit.
 """
 from __future__ import annotations
 
-from src.reserve.evaluation import Processor, Shipment, evaluate_processor
+from reserve.evaluation import Processor, Shipment, evaluate_processor
 
 
 def score_eligible_processors(
