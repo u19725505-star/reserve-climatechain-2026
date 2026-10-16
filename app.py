@@ -1,6 +1,7 @@
 """RESERVE: interactive supply-chain screening demonstration."""
 from pathlib import Path
 import math
+import os
 import sys
 
 from flask import Flask, jsonify, render_template, request
@@ -29,8 +30,29 @@ def home():
 
 @app.get("/health")
 def health():
-    return jsonify({"status": "ok", "service": "RESERVE demo", "release": "0.3", "commit": __import__("os").environ.get("RENDER_GIT_COMMIT", "unknown"), "data_status": "fictional demo data", "emissions_status": "illustrative, not verified"})
-
+    """Report service health and honest demo/chain configuration state."""
+    contract_address = os.environ.get("RESERVE_CONTRACT_ADDRESS", "").strip()
+    try:
+        chain_id = int(os.environ.get("RESERVE_CHAIN_ID", "11155111"))
+    except ValueError:
+        chain_id = None
+    return jsonify({
+        "status": "ok",
+        "service": "RESERVE demo",
+        "release": "0.4",
+        "commit": os.environ.get("RENDER_GIT_COMMIT", "unknown"),
+        "data_status": "fictional demo data",
+        "emissions_status": "illustrative, not verified",
+        "decision_support": "explainable deterministic multi-criteria model; advisory only",
+        "audit_ledger": "local hash-chained file; not decentralized blockchain",
+        "contract_address_configured": bool(contract_address),
+        "configured_chain_id": chain_id,
+        "on_chain_status": (
+            "contract address configured; deployment and bytecode not independently verified"
+            if contract_address else
+            "not configured; no live on-chain integration"
+        ),
+    })
 
 @app.post("/api/evaluate")
 def evaluate():
