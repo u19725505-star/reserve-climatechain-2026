@@ -54,5 +54,35 @@ class TestHashChainedAuditLedger(unittest.TestCase):
                 self.assertIn(result["reason"], {"event_hash_mismatch", "previous_hash_mismatch"})
 
 
+
+class TestDecisionSupportAPI(unittest.TestCase):
+    def test_api_returns_explanations_and_audit_hash(self):
+        from app import app
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.dict(os.environ, {"RESERVE_AUDIT_LEDGER_PATH": os.path.join(tmp, "api.jsonl")}):
+                client = app.test_client()
+                response = client.post("/api/decision-support", json={
+                    "material": "recycled_plastic", "quantity_tonnes": 7,
+                    "required_quality": 0.8, "earliest_delivery_day": 5,
+                    "latest_delivery_day": 8,
+                })
+                self.assertEqual(response.status_code, 200)
+                body = response.get_json()
+                self.assertEqual(body["model"], "RESERVE-XAI-MCDM-0.1")
+                self.assertEqual(body["status"], "advisory_only")
+                self.assertTrue(body["candidates"])
+                self.assertEqual(body["audit"]["event_sequence"], 1)
+                self.assertEqual(len(body["audit"]["event_hash"]), 64)
+                self.assertTrue(client.get("/api/audit").get_json()["valid"])
+
+    def test_audit_api_reports_empty_chain(self):
+        from app import app
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.dict(os.environ, {"RESERVE_AUDIT_LEDGER_PATH": os.path.join(tmp, "empty.jsonl")}):
+                body = app.test_client().get("/api/audit").get_json()
+                self.assertTrue(body["valid"])
+                self.assertEqual(body["event_count"], 0)
+
+
 if __name__ == "__main__":
     unittest.main()
