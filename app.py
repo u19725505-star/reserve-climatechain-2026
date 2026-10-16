@@ -38,7 +38,7 @@ def evaluate():
         quality = float(data.get("required_quality", 0.8))
         earliest = int(data.get("earliest_delivery_day", 5))
         latest = int(data.get("latest_delivery_day", 8))
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return jsonify({"error": "Enter valid numeric shipment requirements."}), 400
 
     if material not in {"recycled_plastic", "paper", "glass", "wood"}:
