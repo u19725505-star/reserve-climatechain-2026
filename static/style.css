@@ -151,3 +151,11 @@ footer p{font-size:11px;color:#a8b9ac;margin:0}
 .audit-event p{font-size:11px;color:#68756a;margin:3px 0}
 .audit-event small{font:9px var(--mono);color:#8a9589;overflow-wrap:anywhere}
 .audit-caveat{font-size:10px;color:#778277;line-height:1.8;margin-top:13px}
+
+
+/* Release 0.2: make the fair-baseline improvement visible above the fold. */
+.release-note{display:flex;align-items:flex-start;gap:12px;max-width:540px;margin-top:22px;padding:14px 16px;border:1px solid #42604c;border-radius:8px;background:#173329;color:#e8f0e8}
+.release-tag{flex:0 0 auto;margin-top:2px;padding:4px 6px;border-radius:4px;background:var(--green);color:var(--forest);font:9px var(--mono);letter-spacing:.8px}
+.release-note strong{display:block;font-size:12px;line-height:1.4}
+.release-note small{display:block;margin-top:4px;color:#b7c8bb;font-size:11px;line-height:1.65}
+@media(max-width:700px){.release-note{margin-top:18px;padding:12px}.release-note small{font-size:10px}}
