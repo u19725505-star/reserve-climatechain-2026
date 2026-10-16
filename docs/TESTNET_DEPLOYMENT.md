@@ -16,7 +16,6 @@ The page anchors a digest computed from the local audit-chain head, event count,
 
 ```bash
 forge install foundry-rs/forge-std --no-git
-forge install foundry-rs/forge-std --no-git
 forge test -vvv
 forge script script/DeployReserveDecisionRegistry.s.sol:DeployReserveDecisionRegistry \
   --rpc-url "$SEPOLIA_RPC_URL" --broadcast -vvvv
