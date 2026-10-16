@@ -1,13 +1,17 @@
 import json
 import os
+import sys
 import tempfile
 import unittest
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from unittest.mock import patch
 
-from src.reserve.audit_ledger import append_event, verify_chain
-from src.reserve.ai_decision import score_eligible_processors
-from src.reserve.demo_data import ILLUSTRATIVE_FACTOR, demo_processors
-from src.reserve.evaluation import Shipment
+from reserve.audit_ledger import append_event, verify_chain
+from reserve.ai_decision import score_eligible_processors
+from reserve.demo_data import ILLUSTRATIVE_FACTOR, demo_processors
+from reserve.evaluation import Shipment
 
 
 class TestExplainableDecisionModel(unittest.TestCase):
