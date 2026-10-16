@@ -60,6 +60,16 @@ class TestFairBaselineAPI(unittest.TestCase):
             })
             self.assertEqual(response.status_code, 400)
 
+    def test_non_finite_delivery_days_are_rejected(self):
+        response = self.client.post("/api/evaluate", json={
+            "material": "recycled_plastic",
+            "quantity_tonnes": 10,
+            "required_quality": 0.8,
+            "earliest_delivery_day": float("inf"),
+            "latest_delivery_day": 8,
+        })
+        self.assertEqual(response.status_code, 400)
+
     def test_no_eligible_candidate_has_no_fabricated_baseline(self):
         response = self.client.post("/api/evaluate", json={
             "material": "glass",
