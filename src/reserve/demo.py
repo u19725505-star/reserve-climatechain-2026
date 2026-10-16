@@ -1,94 +1,141 @@
 """
-RESERVE — Processor Eligibility and Emissions Demonstration
+RESERVE demonstration.
 
-Purpose:
-    Evaluate two illustrative processors and estimate the
-    transport emissions associated with each candidate.
+Demonstrates shipment eligibility, processor ranking, and estimated
+transport emissions using fictional example data.
 
-All processor data and the emissions factor below are synthetic
-demonstration values, not real-world facility measurements.
+The data and emissions factor are illustrative, not verified
+operational information or evidence of real-world climate benefits.
 """
 
-# Import the processor eligibility models and evaluation function.
-from src.reserve.evaluation import (
+from reserve.evaluation import (
     Processor,
     Shipment,
     evaluate_processor,
 )
-
-# Import the transport emissions calculation.
-from src.reserve.emissions import estimate_transport_emissions_kg
+from reserve.ranking import rank_eligible_processors
+from reserve.report import format_processor_report
 
 
 def main():
-    """Evaluate candidate processors and display their results."""
+    """Run the complete RESERVE demonstration."""
 
-    # Define the shipment requirements.
+    # Define a fictional shipment using the existing Shipment fields.
     shipment = Shipment(
         material="recycled_plastic",
-        quantity_tonnes=10,
+        quantity_tonnes=10.0,
         required_quality=0.8,
         earliest_delivery_day=5,
         latest_delivery_day=8,
     )
 
-    # Candidate A meets the eligibility requirements.
-    candidate_a = Processor(
-        name="Processor A",
-        accepted_materials=("recycled_plastic",),
-        available_capacity_tonnes=15,
-        quality_score=0.9,
-        available_from_day=4,
-        available_until_day=9,
-        distance_km=25,
+    # Define fictional processors using the existing Processor fields.
+    processors = [
+        Processor(
+            name="Processor A",
+            accepted_materials=("recycled_plastic",),
+            available_capacity_tonnes=20.0,
+            quality_score=0.9,
+            available_from_day=4,
+            available_until_day=9,
+            distance_km=25.0,
+        ),
+        Processor(
+            name="Processor B",
+            accepted_materials=("recycled_plastic",),
+            available_capacity_tonnes=15.0,
+            quality_score=0.85,
+            available_from_day=5,
+            available_until_day=8,
+            distance_km=15.0,
+        ),
+        Processor(
+            name="Processor C",
+            accepted_materials=("recycled_plastic",),
+            available_capacity_tonnes=5.0,
+            quality_score=0.95,
+            available_from_day=5,
+            available_until_day=8,
+            distance_km=5.0,
+        ),
+        Processor(
+            name="Processor D",
+            accepted_materials=("wood",),
+            available_capacity_tonnes=20.0,
+            quality_score=0.95,
+            available_from_day=5,
+            available_until_day=8,
+            distance_km=10.0,
+        ),
+    ]
+
+    # Illustrative factor only: 0.1 kg CO2e per tonne-kilometre.
+    # Use a documented, appropriate factor for any real application.
+    emission_factor = 0.1
+
+    print("=" * 64)
+    print("RESERVE — PROCESSOR SCREENING DEMONSTRATION")
+    print("=" * 64)
+
+    # Print the shipment requirements.
+    print("\nSHIPMENT")
+    print(f"Material: {shipment.material}")
+    print(f"Quantity: {shipment.quantity_tonnes:g} tonnes")
+    print(f"Required quality: {shipment.required_quality:g}")
+    print(
+        f"Delivery window: days {shipment.earliest_delivery_day}"
+        f"-{shipment.latest_delivery_day}"
     )
 
-    # Candidate B accepts the material but lacks enough capacity.
-    candidate_b = Processor(
-        name="Processor B",
-        accepted_materials=("recycled_plastic",),
-        available_capacity_tonnes=5,
-        quality_score=0.9,
-        available_from_day=4,
-        available_until_day=9,
-        distance_km=40,
-    )
+    # Show the eligibility decision and reasons for each processor.
+    print("\nELIGIBILITY CHECKS")
+    for processor in processors:
+        result = evaluate_processor(shipment, processor)
 
-    # Illustrative factor for testing the calculation only.
-    # Replace this with a documented factor before real use.
-    example_emission_factor = 0.1
-
-    # Evaluate each candidate and explain the decision.
-    for candidate in (candidate_a, candidate_b):
-        result = evaluate_processor(shipment, candidate)
-
-        # Print the eligibility decision first.
-        status = "ELIGIBLE" if result.eligible else "NOT ELIGIBLE"
-        print(f"\n{result.processor}: {status}")
-
-        # Show the reasons when a candidate fails a rule.
-        if result.reasons:
-            for reason in result.reasons:
-                print(f"  - {reason}")
+        if result.eligible:
+            print(f"[ELIGIBLE] {processor.name}")
         else:
-            print("  - All eligibility rules passed.")
+            print(f"[EXCLUDED] {processor.name}")
+            for reason in result.reasons:
+                print(f"    - {reason}")
 
-        # Calculate and display the screening estimate.
-        # This is not proof of actual transport emissions.
-        emissions = estimate_transport_emissions_kg(
-            distance_km=candidate.distance_km,
-            quantity_tonnes=shipment.quantity_tonnes,
-            emission_factor_kg_per_tonne_km=example_emission_factor,
-        )
+    # Rank eligible processors using the existing ranking module.
+    ranked = rank_eligible_processors(
+        shipment=shipment,
+        processors=processors,
+        emission_factor_kg_per_tonne_km=emission_factor,
+    )
 
-        print(f"  Illustrative transport estimate: {emissions:.2f} kg CO2e")
+    # The ranking module returns the processor name as a string.
+    print("\nRANKED ELIGIBLE PROCESSORS")
+    print("-" * 64)
 
-        # Explain that eligibility and emissions are separate checks.
-        if not result.eligible:
-            print("  Note: emissions are shown for comparison only;")
-            print("        this candidate currently fails eligibility.")
+    if not ranked:
+        print("No eligible processors were found.")
+    else:
+        for position, candidate in enumerate(ranked, start=1):
+            processor_name = candidate["processor"]
+            distance = candidate["distance_km"]
+            emissions = candidate["estimated_emissions_kg_co2e"]
+
+            print(
+                f"{position}. {processor_name}: "
+                f"{distance:g} km, approximately "
+                f"{emissions:g} kg CO2e"
+            )
+
+    # Print the project's existing formatted screening report.
+    print("\nFULL SCREENING REPORT")
+    print(format_processor_report(ranked))
+
+    # Explain the limitations of this demonstration.
+    print("\nNOTES")
+    print("- Shipment and processor details are fictional.")
+    print("- The emissions factor is illustrative, not verified.")
+    print("- The estimate covers transport only.")
+    print("- No real-world emissions savings have been established.")
+    print("=" * 64)
 
 
-# Run the demonstration when this module is executed directly.
 if __name__ == "__main__":
     main()
