@@ -52,6 +52,13 @@ Each decision-support request is recorded in a local SHA-256 hash-chained JSONL 
 
 See [Explainable AI and audit-chain design](docs/EXPLAINABLE_AI_AND_AUDIT_CHAIN.md) for the model, weights, endpoints, threat boundaries, and limitations. The demo profiles remain fictional and the emissions factor remains illustrative and unsourced. No real climate benefit is demonstrated.
 
+
+## Smart-contract registry prototype
+
+The repository now includes [ReserveDecisionRegistry.sol](contracts/ReserveDecisionRegistry.sol), a Solidity registry that stores decision-record hashes, previous-hash links, model-version hashes, timestamps, and submitter addresses. Foundry tests and a separate GitHub Actions workflow are included. This is a deployable contract source, but **it has not yet been deployed to a public or test blockchain and the live web app does not yet submit transactions to it**. Until deployment, transaction integration, and network verification are completed, describe RESERVE as having a smart-contract registry prototype plus a local hash-chained audit log—not as a live decentralized blockchain system.
+
+See [EXPLAINABLE_AI_AND_AUDIT_CHAIN.md](docs/EXPLAINABLE_AI_AND_AUDIT_CHAIN.md) for architecture and limitations.
+
 ## License
 
 A license has not yet been selected.
