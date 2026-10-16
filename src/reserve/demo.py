@@ -19,6 +19,7 @@ from reserve.evaluation import (
 from reserve.ranking import rank_eligible_processors
 from reserve.report import format_processor_report
 from reserve.results import build_results_record, save_results_json
+from reserve.demo_data import ILLUSTRATIVE_FACTOR, demo_processors
 
 
 def main():
@@ -32,47 +33,7 @@ def main():
         latest_delivery_day=8,
     )
 
-    processors = [
-        Processor(
-            name="Processor A",
-            accepted_materials=("recycled_plastic",),
-            available_capacity_tonnes=20.0,
-            quality_score=0.9,
-            available_from_day=4,
-            available_until_day=9,
-            distance_km=25.0,
-        ),
-        Processor(
-            name="Processor B",
-            accepted_materials=("recycled_plastic",),
-            available_capacity_tonnes=15.0,
-            quality_score=0.85,
-            available_from_day=5,
-            available_until_day=8,
-            distance_km=15.0,
-        ),
-        Processor(
-            name="Processor C",
-            accepted_materials=("recycled_plastic",),
-            available_capacity_tonnes=5.0,
-            quality_score=0.95,
-            available_from_day=5,
-            available_until_day=8,
-            distance_km=5.0,
-        ),
-        Processor(
-            name="Processor D",
-            accepted_materials=("wood",),
-            available_capacity_tonnes=20.0,
-            quality_score=0.95,
-            available_from_day=5,
-            available_until_day=8,
-            distance_km=10.0,
-        ),
-    ]
-
-    # Illustrative only; not a verified emissions factor.
-    emission_factor = 0.1
+    processors = demo_processors()
 
     print("=" * 64)
     print("RESERVE — PROCESSOR SCREENING DEMONSTRATION")
