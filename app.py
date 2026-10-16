@@ -19,12 +19,20 @@ from reserve.audit_ledger import append_event, verify_chain
 app = Flask(__name__)
 
 
+def configured_chain_id():
+    """Return configured EVM chain ID, defaulting safely to Sepolia."""
+    try:
+        return int(os.environ.get("RESERVE_CHAIN_ID", "11155111"))
+    except (TypeError, ValueError):
+        return 11155111
+
+
 @app.get("/")
 def home():
     return render_template(
         "index.html",
-        contract_address=__import__("os").environ.get("RESERVE_CONTRACT_ADDRESS", "").strip(),
-        chain_id=int(__import__("os").environ.get("RESERVE_CHAIN_ID", "11155111")),
+        contract_address=os.environ.get("RESERVE_CONTRACT_ADDRESS", "").strip(),
+        chain_id=configured_chain_id(),
     )
 
 
@@ -32,10 +40,7 @@ def home():
 def health():
     """Report service health and honest demo/chain configuration state."""
     contract_address = os.environ.get("RESERVE_CONTRACT_ADDRESS", "").strip()
-    try:
-        chain_id = int(os.environ.get("RESERVE_CHAIN_ID", "11155111"))
-    except ValueError:
-        chain_id = None
+    chain_id = configured_chain_id()
     return jsonify({
         "status": "ok",
         "service": "RESERVE demo",
