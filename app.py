@@ -23,7 +23,7 @@ def home():
 
 @app.get("/health")
 def health():
-    return jsonify({"status": "ok", "service": "RESERVE demo"})
+    return jsonify({"status": "ok", "service": "RESERVE demo", "release": "0.3", "commit": __import__("os").environ.get("RENDER_GIT_COMMIT", "unknown"), "data_status": "fictional demo data", "emissions_status": "illustrative, not verified"})
 
 
 @app.post("/api/evaluate")
