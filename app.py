@@ -12,6 +12,8 @@ sys.path.insert(0, str(ROOT / "src"))
 from reserve.evaluation import Shipment, evaluate_processor
 from reserve.ranking import rank_eligible_processors
 from reserve.demo_data import ILLUSTRATIVE_FACTOR, demo_processors
+from reserve.ai_decision import score_eligible_processors
+from reserve.audit_ledger import append_event, verify_chain
 
 app = Flask(__name__)
 
@@ -207,6 +209,68 @@ def evaluate():
             "is established by this demonstration."
         ),
     })
+
+
+
+@app.post("/api/decision-support")
+def decision_support():
+    """Explainable advisory scoring constrained by hard eligibility rules."""
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "Request body must be a JSON object."}), 400
+    try:
+        material = str(data.get("material", "recycled_plastic"))
+        quantity = float(data.get("quantity_tonnes", 7))
+        quality = float(data.get("required_quality", 0.8))
+        earliest = int(data.get("earliest_delivery_day", 5))
+        latest = int(data.get("latest_delivery_day", 8))
+    except (TypeError, ValueError, OverflowError):
+        return jsonify({"error": "Enter valid numeric shipment requirements."}), 400
+    if material not in {"recycled_plastic", "paper", "glass", "wood"}:
+        return jsonify({"error": "Select a supported demonstration material."}), 400
+    if not math.isfinite(quantity) or quantity <= 0:
+        return jsonify({"error": "Quantity must be a finite number greater than zero."}), 400
+    if not math.isfinite(quality) or not 0 <= quality <= 1:
+        return jsonify({"error": "Quality must be a finite number between 0 and 1."}), 400
+    if earliest < 0 or latest < earliest:
+        return jsonify({"error": "Delivery days must be non-negative and ordered."}), 400
+
+    shipment = Shipment(material, quantity, quality, earliest, latest)
+    result = score_eligible_processors(shipment, demo_processors(), ILLUSTRATIVE_FACTOR)
+    event = append_event({
+        "event_type": "explainable_decision_support",
+        "shipment": {
+            "material": material, "quantity_tonnes": quantity,
+            "required_quality": quality, "earliest_delivery_day": earliest,
+            "latest_delivery_day": latest,
+        },
+        "model": result["model"],
+        "model_type": result["model_type"],
+        "selected_advisory_candidate": (
+            result["candidates"][0]["processor"] if result["candidates"] else None
+        ),
+        "data_status": "fictional demonstration data",
+        "emissions_status": "illustrative screening estimates, not verified",
+    })
+    result["audit"] = {
+        "event_sequence": event["sequence"],
+        "event_hash": event["event_hash"],
+        "ledger_type": "local hash-chained audit log",
+        "warning": "Tamper-evident within this chain, but not decentralized blockchain.",
+    }
+    return jsonify(result)
+
+
+@app.get("/api/audit")
+def audit_status():
+    """Return verification status for the local hash-chained event log."""
+    return jsonify(verify_chain())
+
+
+@app.post("/api/audit/verify")
+def audit_verify():
+    """Explicit verification endpoint; performs no mutation."""
+    return jsonify(verify_chain())
 
 
 if __name__ == "__main__":
