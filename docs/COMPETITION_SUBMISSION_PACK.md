@@ -18,7 +18,9 @@ This is a prototype contribution to sustainable-supply-chain decision support. I
 
 Circular-material shipments can be delayed, rejected, or rerouted when processor acceptance rules, available capacity, quality requirements, and delivery windows are not checked together. When routing decisions are difficult to audit, it is also difficult to determine whether a proposed change genuinely improves operational performance or environmental outcomes.
 
-RESERVE is a web-based prototype that screens candidate material processors against shipment requirements, explains eligibility and exclusion reasons, ranks eligible candidates, and compares the selected option with a fair nearest-eligible baseline. It separately identifies the nearest processor overall so that an attractive but infeasible option is not mistaken for a valid baseline. Its API validates user inputs and returns machine-readable processor evaluations and explicit emissions caveats.
+RESERVE is a web-based prototype for sustainable circular-material routing. It screens processors against shipment constraints, explains exclusions, compares the selected option with a fair nearest-eligible baseline, and includes an explainable multi-criteria decision-support model. The model scores only eligible processors using visible weights for transport-emissions estimates, quality margin, capacity headroom, and delivery-window fit. It is deterministic advisory decision support—not a trained or operationally validated machine-learning model.
+
+The project also includes a SHA-256 hash-chained audit log and a Solidity smart-contract registry prototype for anchoring decision hashes. The local audit API is integrated into the web app. The Solidity contract has been added to the repository with Foundry tests, but it has not yet been deployed to a public or test network and the web app does not yet submit on-chain transactions. The project is therefore **blockchain-oriented and smart-contract-ready, but not yet a live decentralized blockchain deployment**.
 
 The current demo uses fictional processor profiles and an intentionally illustrative, unsourced transport-emissions factor. It demonstrates decision logic and evidence discipline—not measured savings. The project includes automated regression tests, an emissions-factor provenance register, a proposed pilot data dictionary, and a controlled shadow-mode evaluation protocol. These artifacts define how a future real deployment could record decisions, source factors, compare outcomes, and report uncertainty.
 
@@ -33,8 +35,11 @@ The next milestone is a shadow-mode pilot with real processor acceptance/capacit
 - Ranking of eligible processors using the configured transport-emissions estimate.
 - Separate nearest-overall and nearest-eligible baseline logic.
 - Input validation and machine-readable exclusion reasons.
+- Explainable weighted decision-support endpoint and browser interface (advisory only; not trained ML).
+- Local SHA-256 hash-chained audit log with verification endpoint.
+- Solidity decision-evidence registry source plus Foundry test configuration.
 - Explicit disclosure of fictional demo data and illustrative emissions.
-- Automated test workflow on GitHub Actions.
+- Automated Python and Solidity test workflows on GitHub Actions.
 - Emissions method notes, factor register, pilot data dictionary, and proposed evaluation protocol.
 
 ### Not yet implemented or demonstrated
@@ -43,8 +48,8 @@ The next milestone is a shadow-mode pilot with real processor acceptance/capacit
 - A sourced and approved factor for each real transport scenario.
 - Measured emissions, cost savings, rejection reduction, or operational improvement.
 - A live controlled pilot or independent review.
-- An AI model that has been trained or evaluated on operational data.
-- An on-chain smart contract or decentralized blockchain. Documentation and a source-control history are not equivalent to an application ledger or blockchain.
+- A trained or operationally validated machine-learning model.
+- A deployed smart contract, live network transaction integration, replicated ledger, or decentralized consensus. The Solidity registry is source code only until deployment and integration are verified.
 
 Do not describe any item in the second list as a completed feature. If an AI or blockchain capability is added before submission, update this section only after the implementation and tests are verified.
 
@@ -95,6 +100,11 @@ Record the actual UI and current behavior; do not narrate features that are not 
 - [ ] Submit the project on Devpost itself; a public website and repository alone do not constitute a completed entry.
 
 ## 8. Project links
+
+- Explainable AI and audit-chain architecture: [EXPLAINABLE_AI_AND_AUDIT_CHAIN.md](EXPLAINABLE_AI_AND_AUDIT_CHAIN.md)
+- Solidity registry: [ReserveDecisionRegistry.sol](../contracts/ReserveDecisionRegistry.sol)
+- Foundry contract tests: [ReserveDecisionRegistry.t.sol](../test-contracts/ReserveDecisionRegistry.t.sol)
+- Python tests for scoring and audit verification: [test_ai_and_ledger.py](../tests/test_ai_and_ledger.py)
 
 - Live demo: https://reserve-climatechain.onrender.com/
 - Repository: https://github.com/u19725505-star/reserve-climatechain-2026
