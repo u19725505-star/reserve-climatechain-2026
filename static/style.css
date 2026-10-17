@@ -248,3 +248,9 @@ footer p{font-size:11px;color:#a8b9ac;margin:0}
     width: 100%;
   }
 }
+
+
+/* Explainable-score criteria: responsive layout controlled by CSS, not inline styles. */
+.criteria-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0 10px}
+.criteria-grid>span{display:block;min-width:0;padding:8px 10px;border-radius:5px;background:#f1f3eb;line-height:1.5;overflow-wrap:anywhere;word-break:normal}
+@media(max-width:680px){.criteria-grid{grid-template-columns:minmax(0,1fr)}}
