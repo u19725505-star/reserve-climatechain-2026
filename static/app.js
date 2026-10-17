@@ -195,7 +195,7 @@ async function runExplainableDecisionSupport() {
       return "<article class=\"processor-card\">" +
         "<div class=\"processor-main\"><div class=\"processor-name\"><span class=\"rank-number\">#" + candidate.ai_rank +
         "</span><span>" + escapeHTML(candidate.processor) + "</span></div><strong>" + formatNumber(candidate.score_percent, 1) + " / 100</strong></div>" +
-        "<p>" + escapeHTML(candidate.explanation) + "</p><div class=\"processor-meta\">" + criteria + "</div>" +
+        "<p>" + escapeHTML(candidate.explanation) + "</p><div class=\"criteria-grid\" style=\"display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0 10px\">" + criteria.replaceAll("<span>", "<span style=\"display:block;min-width:0;padding:8px 10px;border-radius:5px;background:#f1f3eb;line-height:1.5;overflow-wrap:anywhere\">") + "</div>" +
         "<small>Illustrative score; not a trained or operationally validated model.</small></article>";
     }).join("");
     const limitations = data.limitations.map(x => "<li>" + escapeHTML(x) + "</li>").join("");
