@@ -159,3 +159,92 @@ footer p{font-size:11px;color:#a8b9ac;margin:0}
 .release-note strong{display:block;font-size:12px;line-height:1.4}
 .release-note small{display:block;margin-top:4px;color:#b7c8bb;font-size:11px;line-height:1.65}
 @media(max-width:700px){.release-note{margin-top:18px;padding:12px}.release-note small{font-size:10px}}
+
+
+/* AI decision-support results: keep scoring cards separate from the evidence-list layout. */
+#ai-results {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+#ai-results > .processor-card {
+  display: block;
+  min-width: 0;
+  padding: 18px;
+  margin: 0;
+}
+#ai-results > .processor-card .processor-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+#ai-results > .processor-card .processor-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+#ai-results > .processor-card .processor-name > span:last-child {
+  overflow-wrap: anywhere;
+}
+#ai-results > .processor-card .processor-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 14px 0 10px;
+  font-size: 11px;
+}
+#ai-results > .processor-card .processor-meta span {
+  display: block;
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: 5px;
+  background: #f1f3eb;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+#ai-results > .processor-card > small {
+  display: block;
+  margin-top: 12px;
+  color: #748075;
+  line-height: 1.7;
+}
+#ai-results > .integrity-banner {
+  margin-top: 4px;
+  min-width: 0;
+}
+#ai-results > .baseline-box {
+  min-width: 0;
+}
+#ai-results .integrity-banner ul {
+  margin: 10px 0;
+  padding-left: 20px;
+  color: #68756a;
+  font-size: 11px;
+  line-height: 1.8;
+}
+#ai-results .integrity-banner small {
+  display: block;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+  font-size: 10px;
+  line-height: 1.6;
+}
+@media (max-width: 680px) {
+  #ai-results > .processor-card {
+    padding: 14px;
+  }
+  #ai-results > .processor-card .processor-meta {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+  }
+  #ai-results > .processor-card .processor-meta span {
+    padding: 7px 9px;
+  }
+  #ai-results > .processor-card .processor-main > strong {
+    width: 100%;
+  }
+}
