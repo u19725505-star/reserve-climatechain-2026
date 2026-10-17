@@ -1,22 +1,65 @@
 # RESERVE — ClimateChain 2026
 
-**AI-assisted processing reservations and auditable supply-chain decisions**
+**Evidence-ready routing for circular materials**
 
-RESERVE is a prototype designed to help organizations evaluate potential material-processing destinations before dispatch. It combines processor acceptance requirements, available capacity, transport considerations, and documented reservation decisions in a single workflow.
+[**Open the live demo**](https://reserve-climatechain.onrender.com/) · [Source code](https://github.com/u19725505-star/reserve-climatechain-2026) · [Competition submission pack](docs/COMPETITION_SUBMISSION_PACK.md)
+
+[![Python tests](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/tests.yml/badge.svg)](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/tests.yml)
+[![Solidity tests](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/contract-tests.yml/badge.svg)](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/contract-tests.yml)
+
+**Recommended hackathon track:** Sustainable Supply Chains.
+
+RESERVE is a working web prototype that screens candidate material processors against shipment constraints, explains exclusions, compares eligible routing options, and records decision-support events in a locally verifiable audit chain.
+
+> **Evidence boundary:** Demo processor profiles are fictional. The fallback transport factor is illustrative and unsourced. The weighted model is deterministic advisory decision support, not a trained machine-learning model. The local hash chain is not a decentralized blockchain. No real-world emissions reduction is claimed.
+
+## Run locally
+
+Python 3.11+ is recommended.
+
+```bash
+python -m venv .venv
+# macOS/Linux:
+source .venv/bin/activate
+# Windows PowerShell:
+# .venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python app.py
+```
+
+Open the local URL printed by Flask. Run the Python regression suite with:
+
+```bash
+python -m unittest discover -s tests -v
+node --check static/app.js
+```
+
+For the Solidity prototype, install [Foundry](https://book.getfoundry.sh/) and run `forge test -vvv` from the repository root. A passing local contract test does not establish a public-chain deployment.
+
+## Judge / reviewer quick links
+
+- [Competition submission text and 3–5 minute demo script](docs/COMPETITION_SUBMISSION_PACK.md)
+- [Explainable scoring and audit-chain design](docs/EXPLAINABLE_AI_AND_AUDIT_CHAIN.md)
+- [Emissions calculation method](docs/EMISSIONS_METHOD.md)
+- [Emissions-factor provenance register](docs/EMISSIONS_FACTOR_REGISTER.md)
+- [Pilot data dictionary](docs/PILOT_DATA_DICTIONARY.md)
+- [Proposed pilot evaluation protocol](docs/PILOT_EVALUATION_PROTOCOL.md)
+- [Testnet deployment instructions and limitations](docs/TESTNET_DEPLOYMENT.md)
 
 ## The problem
 
 A suitable processor may not be available when a shipment arrives. Material-quality uncertainty, capacity constraints, scheduling changes, and transport requirements can make routing decisions difficult to coordinate and audit.
 
-## Our approach
+## Implemented in this prototype
 
-RESERVE is designed to support:
+- **Eligibility-first screening:** checks material acceptance, available capacity, quality threshold, and delivery window before ranking.
+- **Fair baseline:** compares the selected candidate with the nearest processor that satisfies the same shipment constraints.
+- **Explainable decision support:** exposes deterministic criteria weights and per-candidate contributions; advisory only, not trained ML.
+- **Local audit verification:** records decision-support events in a SHA-256 hash chain and verifies event hashes and previous-record links.
+- **Smart-contract artifact:** includes a Solidity decision-registry prototype and automated Foundry tests; no public/testnet deployment has been verified.
+- **Evidence documentation:** includes an emissions-factor register, calculation method, pilot data dictionary, and proposed shadow-mode evaluation protocol.
 
-* **Processor matching:** evaluate candidate processors against material and operational requirements.
-* **Conditional reservations:** record proposed processing commitments and their status.
-* **Disruption handling:** document cancellations, changes, and potential reallocation.
-* **Emissions accounting:** estimate transport-related emissions using documented assumptions and emission factors.
-* **Auditability:** maintain a linked record of reservation events and changes.
+Conditional booking, live disruption reallocation, production processor integrations, and live on-chain transactions are not represented as completed capabilities.
 
 ## Current status
 
