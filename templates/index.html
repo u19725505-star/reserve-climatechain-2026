@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#10271f">
   <meta name="description" content="RESERVE screens material processors against acceptance, capacity, quality and delivery requirements before dispatch. Demo data and emissions estimates are illustrative, not validated climate outcomes.">
   <title>RESERVE — Explainable AI for circular-material routing</title>
-  <link rel="stylesheet" href="/static/style.css?v=20261016-05">
+  <link rel="stylesheet" href="/static/style.css?v=20261016-06">
 </head>
 <body>
   <header class="nav">
@@ -152,15 +152,29 @@
       <div class="integrity-banner"><span class="integrity-mark">i</span><div><b>Blockchain status: foundational audit primitive, not a decentralized network.</b><p>This version uses a local append-only hash chain and integrity verification. Production blockchain claims would require replicated storage, consensus, access controls, and independently verified deployment.</p></div></div>
     </section>
 
-      <div class="integrity-banner" id="chain-anchor-panel">
-        <span class="integrity-mark">⛓</span>
-        <div>
-          <b>On-chain decision evidence</b>
-          <p id="chain-anchor-description">{% if contract_address %}Configured for chain ID {{ chain_id }}. Connect your browser wallet to anchor a verified audit digest.{% else %}No deployed contract address is configured yet. Deploy the registry to Sepolia, then set RESERVE_CONTRACT_ADDRESS and RESERVE_CHAIN_ID in the Render service environment.{% endif %}</p>
-          <button class="button button-green" id="anchor-on-chain" type="button" data-contract-address="{{ contract_address }}" data-chain-id="{{ chain_id }}" {% if not contract_address %}disabled{% endif %}>Connect wallet & anchor audit hash →</button>
-          <p id="chain-transaction-status" aria-live="polite">No on-chain transaction has been submitted by this page.</p>
+      <section class="section" id="blockchain-demo">
+        <div class="section-kicker">BLOCKCHAIN DEMONSTRATION / LOCAL MODE</div>
+        <h2>Anchor decision evidence.<br><em>Without real funds.</em></h2>
+        <p class="evidence-lead">Explore the decision-registry workflow with a temporary demo identity and a verifiable hash-linked record chain. No wallet extension, phone number, private key, account, or cryptocurrency is required.</p>
+        <div class="integrity-banner">
+          <span class="integrity-mark">⛓</span>
+          <div>
+            <b>Clearly labelled local simulation</b>
+            <p>This interactive browser demo is not a public blockchain transaction. The Solidity registry and automated local-EVM contract tests are separate artifacts; a public-chain deployment has not been verified.</p>
+            <span id="demo-chain-status" class="evidence-status">DEMO IDENTITY NOT CREATED</span>
+          </div>
         </div>
-      </div>
+        <div class="hero-actions">
+          <button class="button button-green" id="create-demo-wallet" type="button">Create temporary demo identity →</button>
+          <button class="button button-light" id="anchor-demo-record" type="button" disabled>Anchor latest audit record</button>
+          <button class="button button-light" id="verify-demo-chain" type="button" disabled>Verify demo chain</button>
+        </div>
+        <div class="evidence-list" aria-live="polite">
+          <article><span class="evidence-check">1</span><div><h3>Demo identity</h3><p id="demo-wallet-address">Not created. The identity is a display-only demo identifier, not an Ethereum address or signing key.</p></div></article>
+          <article><span class="evidence-check">2</span><div><h3>Anchored records</h3><p id="demo-record-summary">Run decision support above to create a server audit event, then anchor its digest here.</p></div></article>
+          <article><span class="evidence-check">3</span><div><h3>Integrity verification</h3><p id="demo-verification-result">The demo verifies each record hash and previous-record link in this page session.</p></div></article>
+        </div>
+      </section>
     <section class="section evidence-section" id="evidence">
       <div class="section-kicker">03 / EVIDENCE & PILOT READINESS</div>
       <div class="evidence-grid">
@@ -191,6 +205,6 @@
     <span class="footer-tag">DEMO RELEASE 0.4 · FAIR BASELINE · OCTOBER 2026</span>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.5/dist/ethers.umd.min.js" defer></script>
-  <script src="/static/app.js?v=20261016-07" defer></script>
+  <script src="/static/app.js?v=20261016-08" defer></script>
 </body>
 </html>
