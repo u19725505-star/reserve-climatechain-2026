@@ -2,7 +2,7 @@
 
 **Evidence-ready routing for circular materials**
 
-[**Open the live demo**](https://reserve-climatechain.onrender.com/) · [Source code](https://github.com/u19725505-star/reserve-climatechain-2026) · [Competition submission pack](docs/COMPETITION_SUBMISSION_PACK.md)
+[**Open the live demo**](https://reserve-climatechain.onrender.com/) · [Source code](https://github.com/u19725505-star/reserve-climatechain-2026) 
 
 [![Python tests](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/tests.yml/badge.svg)](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/tests.yml)
 [![Solidity tests](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/contract-tests.yml/badge.svg)](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/contract-tests.yml)
