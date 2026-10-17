@@ -314,3 +314,118 @@ async function anchorAuditDigest() {
   }
 }
 document.querySelector("#anchor-on-chain")?.addEventListener("click", anchorAuditDigest);
+
+
+// Local blockchain demonstration. This intentionally does not create a real
+// wallet, private key, signed transaction, or public-chain transaction.
+const demoChain = [];
+let demoIdentity = null;
+
+function demoHex(bytes) {
+  return [...bytes].map(byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
+async function sha256Hex(value) {
+  if (!globalThis.crypto || !crypto.subtle) {
+    throw new Error("Secure browser hashing is unavailable. Open RESERVE over HTTPS.");
+  }
+  const bytes = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return demoHex(new Uint8Array(bytes));
+}
+
+function setDemoStatus(message, warning = false) {
+  const status = document.querySelector("#demo-chain-status");
+  if (!status) return;
+  status.textContent = message;
+  status.className = "evidence-status" + (warning ? " pending-text" : "");
+}
+
+async function createDemoIdentity() {
+  const button = document.querySelector("#create-demo-wallet");
+  if (!button) return;
+  button.disabled = true;
+  try {
+    const random = new Uint8Array(16);
+    crypto.getRandomValues(random);
+    demoIdentity = "RESERVE-DEMO-" + demoHex(random).toUpperCase();
+    document.querySelector("#demo-wallet-address").textContent =
+      demoIdentity + " — temporary demo label only; no private key or funds exist.";
+    document.querySelector("#anchor-demo-record").disabled = false;
+    document.querySelector("#verify-demo-chain").disabled = false;
+    setDemoStatus("TEMPORARY DEMO IDENTITY READY");
+  } catch (error) {
+    setDemoStatus(error.message || "Could not create demo identity.", true);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function anchorDemoRecord() {
+  const button = document.querySelector("#anchor-demo-record");
+  if (!button || !demoIdentity) return;
+  button.disabled = true;
+  try {
+    const response = await fetch("/api/audit");
+    const audit = await response.json();
+    if (!response.ok || !audit.valid) throw new Error("The server audit chain did not verify.");
+    if (!audit.event_count || !audit.head_hash) {
+      throw new Error("Run decision support above first so there is an audit event to anchor.");
+    }
+    const previousHash = demoChain.length ? demoChain[demoChain.length - 1].recordHash : "GENESIS";
+    const payload = {
+      sequence: demoChain.length + 1,
+      identity: demoIdentity,
+      auditEventCount: audit.event_count,
+      auditHeadHash: audit.head_hash,
+      previousHash,
+      modelVersion: "RESERVE-XAI-MCDM-0.1",
+      network: "LOCAL-DEMO-SIMULATION"
+    };
+    const recordHash = await sha256Hex(JSON.stringify(payload));
+    demoChain.push({...payload, recordHash});
+    document.querySelector("#demo-record-summary").textContent =
+      "Record #" + payload.sequence + " · audit events " + payload.auditEventCount +
+      " · SHA-256 " + recordHash + " · previous " + previousHash.slice(0, 18) + "…";
+    document.querySelector("#demo-verification-result").textContent =
+      "Record added to the in-memory demo chain. This is not a public-chain transaction.";
+    setDemoStatus("DEMO RECORD " + payload.sequence + " CREATED");
+  } catch (error) {
+    document.querySelector("#demo-record-summary").textContent =
+      error.message || "Could not create demo record.";
+    setDemoStatus("RECORD NOT CREATED", true);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function verifyDemoChain() {
+  const button = document.querySelector("#verify-demo-chain");
+  if (!button) return;
+  button.disabled = true;
+  try {
+    let previousHash = "GENESIS";
+    for (let i = 0; i < demoChain.length; i += 1) {
+      const record = demoChain[i];
+      const {recordHash, ...payload} = record;
+      if (payload.sequence !== i + 1 || payload.previousHash !== previousHash) {
+        throw new Error("Sequence or previous-record link mismatch at record #" + (i + 1) + ".");
+      }
+      const computed = await sha256Hex(JSON.stringify(payload));
+      if (computed !== recordHash) throw new Error("Hash mismatch at record #" + (i + 1) + ".");
+      previousHash = recordHash;
+    }
+    document.querySelector("#demo-verification-result").textContent =
+      "PASS — " + demoChain.length + " record(s) verified; each digest and previous-record link matches. " +
+      "Verification covers this browser session only, not a decentralized network.";
+    setDemoStatus("DEMO CHAIN VALID · " + demoChain.length + " RECORDS");
+  } catch (error) {
+    document.querySelector("#demo-verification-result").textContent = error.message || "Verification failed.";
+    setDemoStatus("DEMO CHAIN INVALID", true);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+document.querySelector("#create-demo-wallet")?.addEventListener("click", createDemoIdentity);
+document.querySelector("#anchor-demo-record")?.addEventListener("click", anchorDemoRecord);
+document.querySelector("#verify-demo-chain")?.addEventListener("click", verifyDemoChain);

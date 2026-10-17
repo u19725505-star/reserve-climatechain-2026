@@ -66,3 +66,10 @@ The web interface includes an optional browser-wallet action to anchor a digest 
 ## License
 
 A license has not yet been selected.
+
+
+## Blockchain demonstration mode
+
+The website includes an explicitly labelled local demonstration identity and in-memory SHA-256 linked-record workflow. It does not create a real wallet, private key, signed transaction, or public-chain transaction. The demo is intended to make the evidence-anchoring sequence understandable without requiring personal information or cryptocurrency; its records exist only for the current browser page session.
+
+The Solidity `ReserveDecisionRegistry` is a separate smart-contract prototype. The repository's automated Solidity workflow is the place to verify contract behavior in a local EVM. A successful local test is not the same as a deployed public-chain contract, and RESERVE must not claim public-chain anchoring until a deployment and transaction are independently verified.
