@@ -36,6 +36,12 @@ def home():
     )
 
 
+@app.get("/judges")
+def judges_guide():
+    """Guided, step-by-step walkthrough for competition judges."""
+    return render_template("judges.html")
+
+
 @app.get("/health")
 def health():
     """Report service health and honest demo/chain configuration state."""
