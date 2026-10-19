@@ -1,118 +1,197 @@
-# RESERVE — ClimateChain 2026
+# RESERVE — Climate-Aware Routing for Circular Materials
 
-**Evidence-ready routing for circular materials**
+**Evidence-ready routing for circular materials.**  
+RESERVE screens processors for operational eligibility, explains its recommendations, estimates transport emissions, and records decision evidence.
 
-[**Open the live demo**](https://reserve-climatechain.onrender.com/) · [Source code](https://github.com/u19725505-star/reserve-climatechain-2026) 
+<p align="center">
+  <a href="https://reserve-climatechain.onrender.com/"><strong>Open the live demo</strong></a> ·
+  <a href="https://reserve-climatechain.onrender.com/judges"><strong>Follow the judge walkthrough</strong></a> ·
+  <a href="https://youtu.be/DFO8bHf4XKA"><strong>Watch the demo video</strong></a> ·
+  <a href="https://devpost.com/software/reserve-climate-aware-resource-routing"><strong>Devpost project</strong></a>
+</p>
 
 [![Python tests](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/tests.yml/badge.svg)](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/tests.yml)
 [![Solidity tests](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/contract-tests.yml/badge.svg)](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/contract-tests.yml)
 
-**Recommended hackathon track:** Sustainable Supply Chains.
+**Competition context:** IEEE ClimateChain Global Hackathon 2026  
+**Proposed track alignment:** Sustainable Supply Chains
 
-RESERVE is a working web prototype that screens candidate material processors against shipment constraints, explains exclusions, compares eligible routing options, and records decision-support events in a locally verifiable audit chain.
+> **Evidence and scope:** This is a publicly accessible proof-of-concept application. Processor profiles are fictional, and the default transport-emissions factor is illustrative and unsourced. The scoring model is deterministic decision support—not trained machine learning. The local audit log is not a decentralized blockchain. The Solidity registry is a separate prototype; public/testnet deployment and live on-chain transactions have not been verified. No measured or independently verified climate savings are claimed.
 
-> **Evidence boundary:** Demo processor profiles are fictional. The fallback transport factor is illustrative and unsourced. The weighted model is deterministic advisory decision support, not a trained machine-learning model. The local hash chain is not a decentralized blockchain. No real-world emissions reduction is claimed.
+---
+
+## Start here: judge walkthrough
+
+The fastest way to evaluate RESERVE is to open the [guided six-step walkthrough](https://reserve-climatechain.onrender.com/judges), then try the [live application](https://reserve-climatechain.onrender.com/). No local installation, wallet, cryptocurrency, or personal information is required for the demonstration.
+
+### Six steps to evaluate the project
+
+1. **Understand the problem.** Circular-material routing is not simply a nearest-destination problem: a processor must be able to accept and handle the shipment.
+2. **Enter shipment requirements.** Set material type, quantity, required quality, and delivery window.
+3. **Inspect eligibility.** See which fictional processors pass or fail hard constraints and read the reasons for exclusions.
+4. **Review the recommendation.** Compare eligible candidates and inspect the deterministic multi-criteria scoring explanation.
+5. **Challenge the climate estimate.** Review the transport-emissions assumptions and compare the selected option with the nearest eligible processor under the same shipment constraints.
+6. **Verify the evidence boundary.** Inspect the local hash-chained audit verification and the separate Solidity registry prototype; note what is implemented and what remains future work.
+
+The walkthrough is designed to help reviewers understand the problem, the workflow, the decision logic, the climate assumptions, and the project's current limits without needing to infer them from the source code.
+
+## Demo video
+
+[**Watch the RESERVE demonstration on YouTube**](https://youtu.be/DFO8bHf4XKA)
+
+The video accompanies the live prototype and repository. For the most complete review, watch the video and then reproduce the workflow in the [live app](https://reserve-climatechain.onrender.com/).
+
+## The problem
+
+Recovered materials need destinations that can accept the material, meet quality requirements, accommodate shipment volume, and satisfy delivery constraints. A geographically close facility may be infeasible. A ranking that hides exclusion reasons or climate assumptions can also be difficult to scrutinize.
+
+RESERVE explores an eligibility-first, explainable decision-support workflow for circular-material logistics. It is intended as a starting point for evidence-led evaluation—not a production dispatch system.
+
+## What the prototype does
+
+- **Eligibility-first screening:** checks material acceptance, available capacity, required quality, and delivery window before ranking candidates.
+- **Explainable ranking:** ranks eligible options using visible criteria and per-candidate contributions.
+- **Nearest-eligible baseline:** compares the selected candidate with the nearest processor that satisfies the same shipment constraints. The nearest processor overall is shown separately because it may be ineligible.
+- **Illustrative emissions estimates:** calculates screening estimates from shipment quantity, route distance, and a configured or fallback emissions factor.
+- **Tamper-evident local audit log:** records decision-support events in a SHA-256 hash chain and provides endpoints to inspect and verify the chain.
+- **Solidity registry prototype:** includes a smart-contract artifact and Foundry tests for hash-linked decision evidence.
+- **Reproducible engineering trail:** includes Python tests, contract tests, CI workflows, and documentation for emissions assumptions and a future pilot evaluation.
+
+### Explainable decision-support model
+
+The current deterministic model applies illustrative weights to four criteria:
+
+| Criterion | Weight |
+|---|---:|
+| Estimated transport emissions | 45% |
+| Quality margin | 20% |
+| Capacity headroom | 20% |
+| Delivery-window fit | 15% |
+
+Eligibility is enforced before ranking. The weights are configurable decision parameters, not learned coefficients, and the model has not been validated against real operational outcomes. Its recommendation is advisory only.
+
+## Climate methodology: what the numbers mean
+
+The demo's emissions figures are **illustrative estimates**, not measurements. They are intended to expose the calculation and make assumptions inspectable.
+
+- The default fallback factor is `0.1 kg CO₂e/(tonne-km)`; it is illustrative and unsourced, not an EPA factor.
+- Processor profiles are fictional. The demo does not establish real facility capacity, material acceptance, transport activity, or actual emissions.
+- The comparison baseline is the **nearest eligible processor** under the same shipment constraints. The nearest processor overall is shown separately and may be excluded.
+- When the same fallback factor is used for every candidate, emissions ranking is equivalent to distance ranking. The nearest-eligible baseline should therefore show **0% modeled improvement** unless defensible candidate-specific factors change the comparison.
+- A modeled difference is not a measured or verified reduction. No real-world climate benefit is established by this prototype.
+
+Before a real pilot, each factor should have a traceable source, publication/data year, freight category, original units, conversion method, system boundary, and uncertainty notes. See [Emissions Method](docs/EMISSIONS_METHOD.md) and [Emissions-Factor Register](docs/EMISSIONS_FACTOR_REGISTER.md).
+
+## Auditability and blockchain scope
+
+### Local audit chain
+
+Decision-support events are recorded in a local SHA-256 hash-chained JSONL log. The application exposes:
+
+- `POST /api/decision-support` — evaluate eligible candidates and record a decision-support event.
+- `GET /api/audit` — inspect audit-chain verification status.
+- `POST /api/audit/verify` — explicitly verify the chain without mutating it.
+- `GET /health` — inspect service and configuration status.
+
+A hash chain can help reveal changes to recorded events when verified against the chain. By itself, it does not provide consensus, independent validators, replicated storage, or the guarantees of a decentralized blockchain.
+
+### Solidity registry prototype
+
+The repository includes [`contracts/ReserveDecisionRegistry.sol`](contracts/ReserveDecisionRegistry.sol), with Foundry tests in `test-contracts/` and a separate GitHub Actions workflow. The contract is designed to anchor decision-record hashes, previous-hash links, model-version hashes, timestamps, and submitter addresses.
+
+**Deployment status:** A public/testnet deployment and live on-chain transaction integration have not been independently verified. The local audit log and the Solidity contract are separate components. Do not interpret a passing local contract test as evidence of a deployed blockchain.
+
+See [Testnet Deployment Notes](docs/TESTNET_DEPLOYMENT.md) for the deployment path and requirements.
+
+## Architecture and technology
+
+- **Backend:** Python, Flask
+- **Frontend:** HTML, CSS, JavaScript
+- **Decision logic:** eligibility rules and deterministic multi-criteria scoring
+- **Audit:** SHA-256 hash-chained local event log
+- **Smart-contract prototype:** Solidity, Foundry
+- **Hosting:** Render
+- **Automation:** GitHub Actions for Python and Solidity test workflows
+
+The system is not currently a trained machine-learning application. It does not perform live processor integrations, production dispatch, or verified on-chain writes.
 
 ## Run locally
 
-Python 3.11+ is recommended.
+Python 3.11 or newer is recommended.
 
 ```bash
+git clone https://github.com/u19725505-star/reserve-climatechain-2026.git
+cd reserve-climatechain-2026
+
 python -m venv .venv
-# macOS/Linux:
+
+# macOS / Linux
 source .venv/bin/activate
-# Windows PowerShell:
+
+# Windows PowerShell
 # .venv\Scripts\Activate.ps1
+
 python -m pip install -r requirements.txt
 python app.py
 ```
 
-Open the local URL printed by Flask. Run the Python regression suite with:
+Open the local address printed by Flask (normally `http://127.0.0.1:5000`).
+
+### Run checks
+
+Run the Python regression tests and JavaScript syntax check:
 
 ```bash
 python -m unittest discover -s tests -v
 node --check static/app.js
 ```
 
-For the Solidity prototype, install [Foundry](https://book.getfoundry.sh/) and run `forge test -vvv` from the repository root. A passing local contract test does not establish a public-chain deployment.
+To test the Solidity registry, install [Foundry](https://book.getfoundry.sh/) and run:
 
-## Judge / reviewer quick links
+```bash
+forge test -vvv
+```
 
-- [Competition submission text and 3–5 minute demo script](docs/COMPETITION_SUBMISSION_PACK.md)
-- [Explainable scoring and audit-chain design](docs/EXPLAINABLE_AI_AND_AUDIT_CHAIN.md)
-- [Emissions calculation method](docs/EMISSIONS_METHOD.md)
-- [Emissions-factor provenance register](docs/EMISSIONS_FACTOR_REGISTER.md)
-- [Pilot data dictionary](docs/PILOT_DATA_DICTIONARY.md)
-- [Proposed pilot evaluation protocol](docs/PILOT_EVALUATION_PROTOCOL.md)
-- [Testnet deployment instructions and limitations](docs/TESTNET_DEPLOYMENT.md)
+The GitHub Actions workflows provide an additional automated test record:
 
-## The problem
+- [Python test workflow](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/tests.yml)
+- [Solidity contract-test workflow](https://github.com/u19725505-star/reserve-climatechain-2026/actions/workflows/contract-tests.yml)
 
-A suitable processor may not be available when a shipment arrives. Material-quality uncertainty, capacity constraints, scheduling changes, and transport requirements can make routing decisions difficult to coordinate and audit.
+A successful test run supports the tested code paths; it does not establish real-world climate performance or public-chain deployment.
 
-## Implemented in this prototype
+## Reviewer documentation
 
-- **Eligibility-first screening:** checks material acceptance, available capacity, quality threshold, and delivery window before ranking.
-- **Fair baseline:** compares the selected candidate with the nearest processor that satisfies the same shipment constraints.
-- **Explainable decision support:** exposes deterministic criteria weights and per-candidate contributions; advisory only, not trained ML.
-- **Local audit verification:** records decision-support events in a SHA-256 hash chain and verifies event hashes and previous-record links.
-- **Smart-contract artifact:** includes a Solidity decision-registry prototype and automated Foundry tests; no public/testnet deployment has been verified.
-- **Evidence documentation:** includes an emissions-factor register, calculation method, pilot data dictionary, and proposed shadow-mode evaluation protocol.
+| Document | What it covers |
+|---|---|
+| [Competition submission pack](docs/COMPETITION_SUBMISSION_PACK.md) | Submission narrative and demo guidance |
+| [Explainable AI and audit-chain design](docs/EXPLAINABLE_AI_AND_AUDIT_CHAIN.md) | Scoring, weights, endpoints, threat boundaries, and limitations |
+| [Emissions method](docs/EMISSIONS_METHOD.md) | Calculation method and reference notes |
+| [Emissions-factor register](docs/EMISSIONS_FACTOR_REGISTER.md) | Factor provenance and data requirements |
+| [Pilot data dictionary](docs/PILOT_DATA_DICTIONARY.md) | Proposed operational data fields |
+| [Pilot evaluation protocol](docs/PILOT_EVALUATION_PROTOCOL.md) | Proposed shadow-mode evaluation |
+| [Testnet deployment notes](docs/TESTNET_DEPLOYMENT.md) | Contract deployment requirements and limitations |
 
-Conditional booking, live disruption reallocation, production processor integrations, and live on-chain transactions are not represented as completed capabilities.
+## Limitations and next milestones
 
-## Current status
+RESERVE is not yet a validated operational routing service. Its present limitations include synthetic processor profiles, an illustrative fallback emissions factor, no demonstrated measured climate benefit, and no verified public-chain deployment or live transaction integration.
 
-RESERVE is a prototype. Its simulation results must be distinguished from real-world operational measurements. No emissions savings or commercial impact should be considered demonstrated without appropriate validation.
+The next milestones are:
 
-## Project contents
+1. Obtain permission to evaluate realistic processor acceptance, capacity, shipment, and delivery data.
+2. Replace the fallback factor with traceable, scenario-appropriate emissions factors and document uncertainty and boundaries.
+3. Compare recommendations against a defensible baseline under equivalent constraints.
+4. Run in shadow mode alongside existing operations without controlling dispatch.
+5. Evaluate feasibility, rejection rates, delivery performance, and estimated emissions with independent review.
+6. Deploy and verify the contract on a test network only if on-chain anchoring provides a clear benefit over the local audit trail.
 
-The repository contains the Flask demonstration app, evaluation and ranking modules, automated tests, method documentation, and reproducible demo output. The demo profiles and fallback factor are synthetic/illustrative.
+## Competition context
 
-## Emissions comparison and evidence limits
-
-The demo compares RESERVE's recommendation with the **nearest eligible processor**, applying the same shipment constraints to both. The nearest processor overall is shown separately because it may be infeasible. A modeled difference is not a measured reduction.
-
-- The default factor of `0.1 kg CO₂e/(tonne-km)` is illustrative and unsourced; it is not an EPA factor.
-- Candidate-specific factors can be supplied only with a source label. Record the source URL, data year, freight category, original units and any conversion before using a factor for real decisions.
-- See [the emissions method and EPA reference notes](docs/EMISSIONS_METHOD.md). EPA SmartWay provides a relevant methodology and freight-carrier performance data, but does not validate the fictional processor profiles in this demo.
-- With the same fallback factor for every candidate, the emissions ranking is equivalent to ranking by distance. The fair nearest-eligible baseline should therefore show **0% modeled improvement** unless defensible candidate-specific factors are supplied.
-- No operational emissions reduction or real-world climate benefit is currently verified.
-
-## Reproducibility and limitations
-
-We aim to document data provenance, assumptions, calculation methods, test results, and known limitations. Estimates depend on the quality of the input data and the suitability of the emission factors used.
-
-## Competition
-
-Prepared for consideration in the IEEE ClimateChain Global Hackathon 2026. Final competition eligibility and submission requirements should be checked against the official rules.
-
-## Explainable decision support and audit-chain prototype
-
-RESERVE now includes a deterministic explainable multi-criteria decision model exposed at `POST /api/decision-support`. It first enforces hard processor eligibility, then shows visible weighted criteria for modeled transport emissions (45%), quality margin (20%), capacity headroom (20%), and delivery-window fit (15%). These are illustrative decision-support weights, not a trained or validated machine-learning model. The result is advisory only.
-
-Each decision-support request is recorded in a local SHA-256 hash-chained JSONL audit log. `GET /api/audit` and `POST /api/audit/verify` report whether the chain links and event hashes verify. This is a tamper-evident audit primitive, **not a decentralized blockchain**: it does not implement consensus, independent validators, or replicated storage. Do not claim a deployed blockchain until those components exist and are independently checked.
-
-See [Explainable AI and audit-chain design](docs/EXPLAINABLE_AI_AND_AUDIT_CHAIN.md) for the model, weights, endpoints, threat boundaries, and limitations. The demo profiles remain fictional and the emissions factor remains illustrative and unsourced. No real climate benefit is demonstrated.
-
-
-## Smart-contract registry prototype
-
-The repository now includes [ReserveDecisionRegistry.sol](contracts/ReserveDecisionRegistry.sol), a Solidity registry that stores decision-record hashes, previous-hash links, model-version hashes, timestamps, and submitter addresses. Foundry tests and a separate GitHub Actions workflow are included. This is a deployable contract source, but **it has not yet been deployed to a public or test blockchain and the live web app does not yet submit transactions to it**. Until deployment, transaction integration, and network verification are completed, describe RESERVE as having a smart-contract registry prototype plus a local hash-chained audit log—not as a live decentralized blockchain system.
-
-See [EXPLAINABLE_AI_AND_AUDIT_CHAIN.md](docs/EXPLAINABLE_AI_AND_AUDIT_CHAIN.md) for architecture and limitations.
-
-## Testnet integration
-
-The web interface includes an optional browser-wallet action to anchor a digest of the verified local audit chain to a configured deployment of the Solidity registry. It is disabled until a contract address is configured. Deployment and activation instructions are in [TESTNET_DEPLOYMENT.md](docs/TESTNET_DEPLOYMENT.md). The contract is not deployed by this repository automatically; a testnet deployment and independently confirmed transaction are required before claiming live on-chain integration.
+This project was prepared for consideration in the **IEEE ClimateChain Global Hackathon 2026**. It is intended to align with sustainable supply-chain decision support by making material-routing constraints and climate-estimation assumptions more transparent. Please verify the official track options, eligibility, deadline, and submission status on the [official hackathon page](https://ieee-climatechain-hack.devpost.com/) and [rules](https://ieee-climatechain-hack.devpost.com/rules).
 
 ## License
 
-A license has not yet been selected.
+A license has not yet been selected. Unless and until a license is added, do not assume the repository grants permissions beyond the rights provided by applicable law.
 
+---
 
-## Blockchain demonstration mode
-
-The website includes an explicitly labelled local demonstration identity and in-memory SHA-256 linked-record workflow. It does not create a real wallet, private key, signed transaction, or public-chain transaction. The demo is intended to make the evidence-anchoring sequence understandable without requiring personal information or cryptocurrency; its records exist only for the current browser page session.
-
-The Solidity `ReserveDecisionRegistry` is a separate smart-contract prototype. The repository's automated Solidity workflow is the place to verify contract behavior in a local EVM. A successful local test is not the same as a deployed public-chain contract, and RESERVE must not claim public-chain anchoring until a deployment and transaction are independently verified.
+**Better routing decisions. Transparent evidence. Measurable climate impact—when validated.**
