@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10271f">
+  <meta name="description" content="A guided judge walkthrough of RESERVE: the problem, shipment inputs, eligibility, explainable scoring, climate evidence and next steps.">
+  <title>Judge Walkthrough — RESERVE</title>
+  <link rel="stylesheet" href="/static/judge-guide.css?v=20261019-1">
+  <script src="/static/judge-guide.js?v=20261019-1" defer></script>
+</head>
+<body>
+  <header class="jg-header">
+    <a class="jg-brand" href="/" aria-label="RESERVE home"><span class="jg-mark">R</span><span>RESERVE<small>RESOURCE ROUTING</small></span></a>
+    <nav aria-label="Main navigation"><a href="/">Project home</a><a href="/#simulator">Try the demo</a></nav>
+  </header>
+  <main class="jg-shell">
+    <section class="jg-hero">
+      <div class="jg-eyebrow"><span></span> COMPETITION REVIEW MODE</div>
+      <h1>Follow the decision.<br><em>Inspect the evidence.</em></h1>
+      <p>A six-step guided tour designed to make the problem, workflow, decision logic, climate assumptions, and remaining validation work easy to evaluate.</p>
+      <div class="jg-hero-foot"><span>6 STEPS</span><span>~4 MINUTES</span><span>INTERACTIVE WALKTHROUGH</span></div>
+      <div class="jg-hero-art" aria-hidden="true"><div class="jg-orbit orbit-one"></div><div class="jg-orbit orbit-two"></div><div class="jg-core">R</div><div class="jg-node node-a">INPUT</div><div class="jg-node node-b">RULES</div><div class="jg-node node-c">EVIDENCE</div></div>
+    </section>
+
+    <section class="jg-tour" aria-label="Guided judge walkthrough">
+      <div class="jg-progress-row"><div><span class="jg-kicker">GUIDED REVIEW</span><h2 id="step-title">01 — The problem</h2></div><span id="step-count" class="jg-count">STEP 1 OF 6</span></div>
+      <div class="jg-progress" aria-label="Tour progress"><span id="progress-fill"></span></div>
+      <div class="jg-layout">
+        <aside class="jg-steps" aria-label="Choose a walkthrough step">
+          <button class="jg-step active" type="button" data-step="0" aria-current="step"><span>01</span><span><b>The problem</b><small>Why routing needs rules</small></span><i>↗</i></button>
+          <button class="jg-step" type="button" data-step="1"><span>02</span><span><b>Shipment inputs</b><small>Define the scenario</small></span><i>↗</i></button>
+          <button class="jg-step" type="button" data-step="2"><span>03</span><span><b>Eligibility & ranking</b><small>Rules before scores</small></span><i>↗</i></button>
+          <button class="jg-step" type="button" data-step="3"><span>04</span><span><b>Explainable AI</b><small>Inspect the rationale</small></span><i>↗</i></button>
+          <button class="jg-step" type="button" data-step="4"><span>05</span><span><b>Climate evidence</b><small>Understand the limits</small></span><i>↗</i></button>
+          <button class="jg-step" type="button" data-step="5"><span>06</span><span><b>Judge summary</b><small>What is built next</small></span><i>↗</i></button>
+        </aside>
+        <article class="jg-panel" aria-live="polite" aria-atomic="true">
+          <div class="jg-panel-top"><span id="panel-label">01 / CHALLENGE</span><span class="jg-demo-tag"><span></span> PROTOTYPE</span></div>
+          <div class="jg-visual" id="step-visual" aria-hidden="true">
+            <div class="jg-flow-card flow-source"><span>SHIPMENT</span><b>Mixed material</b><small>Requirements</small></div><div class="jg-flow-arrow">→</div><div class="jg-flow-card flow-filter"><span>SCREEN</span><b>Hard rules</b><small>Eligibility first</small></div><div class="jg-flow-arrow">→</div><div class="jg-flow-card flow-dest"><span>DECISION</span><b>Ranked options</b><small>Explainable result</small></div>
+          </div>
+          <h3 id="panel-heading">Distance alone is not enough.</h3>
+          <p id="panel-copy">A nearby processor may reject a material, lack available capacity, miss a quality threshold, or be unable to meet the delivery window. RESERVE makes these constraints visible before comparing options.</p>
+          <div class="jg-takeaway"><span>KEY POINT</span><p id="panel-takeaway">The best destination is a feasible destination first—not simply the closest pin on a map.</p></div>
+          <div class="jg-links" id="panel-links"><a href="/#simulator">Explore the live scenario <span>↗</span></a></div>
+          <div class="jg-controls"><button id="prev-step" class="jg-prev" type="button" disabled>← Previous</button><button id="next-step" class="jg-next" type="button">Next step <span>→</span></button></div>
+        </article>
+      </div>
+      <noscript><p class="jg-noscript">JavaScript is needed for step navigation. You can still explore the full project at <a href="/">the RESERVE home page</a>.</p></noscript>
+    </section>
+    <section class="jg-footer-card"><div><span class="jg-kicker">REVIEW PRINCIPLE</span><h2>Clear about what works.<br><em>Clear about what remains.</em></h2></div><p>RESERVE is a decision-support prototype. Processor profiles are fictional, scoring weights are illustrative, emissions factors are not validated, and a decentralized blockchain deployment has not been established by this demo.</p><a href="/#evidence">Read the evidence and limitations <span>↗</span></a></section>
+  </main>
+  <footer class="jg-footer"><span>RESERVE · GUIDED REVIEW</span><span>Prototype walkthrough · October 2026</span></footer>
+</body>
+</html>
