@@ -37,7 +37,9 @@ The walkthrough is designed to help reviewers understand the problem, the workfl
 
 ## Demo video
 
-[**Watch the RESERVE demonstration on YouTube**](https://youtu.be/DFO8bHf4XKA)
+[![Watch the RESERVE ClimateChain demo on YouTube](https://img.youtube.com/vi/DFO8bHf4XKA/hqdefault.jpg)](https://www.youtube.com/watch?v=DFO8bHf4XKA)
+
+**▶ [Watch the RESERVE ClimateChain demo on YouTube](https://www.youtube.com/watch?v=DFO8bHf4XKA)**
 
 The video accompanies the live prototype and repository. For the most complete review, watch the video and then reproduce the workflow in the [live app](https://reserve-climatechain.onrender.com/).
 
